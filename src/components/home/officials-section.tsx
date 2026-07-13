@@ -1,5 +1,4 @@
 import Image from 'next/image';
-import Link from 'next/link';
 import { Card, CardBody } from '@/components/ui/card';
 
 const officials = [
@@ -79,20 +78,18 @@ export default function OfficialsSection() {
         </div>
 
         {/* Top Officials Grid - 4 Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="mx-auto mb-8 grid max-w-6xl grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {officials.slice(0, 4).map((official, index) => (
-            <Card key={index} hover className="group overflow-hidden border-2 border-blue-100 hover:border-blue-300 transition-all duration-300">
+            <Card key={index} hover className="group overflow-hidden border border-blue-100 transition-all duration-300 hover:border-blue-300">
               <div className="relative">
                 {/* Image Container */}
-                <div className="aspect-[3/4] bg-gradient-to-br from-blue-100 via-white to-blue-50 flex items-center justify-center overflow-hidden">
-                  <Link href={official.profileUrl} target="_blank" rel="noopener noreferrer" className="relative block h-full w-full">
-                    <Image
-                      src={official.image}
-                      alt={official.name}
-                      fill
-                      className="object-cover transition-transform duration-500 group-hover:scale-105"
-                    />
-                  </Link>
+                <div className="relative flex h-56 items-center justify-center overflow-hidden bg-gradient-to-br from-blue-100 via-white to-blue-50 sm:h-60 lg:h-56">
+                  <Image
+                    src={official.image}
+                    alt={official.name}
+                    fill
+                    className="object-contain object-bottom transition-transform duration-500 group-hover:scale-105"
+                  />
                 </div>
                 
                 {/* Blue Overlay on Hover */}
@@ -105,28 +102,26 @@ export default function OfficialsSection() {
               </div>
               
               {/* Card Body */}
-              <CardBody className="text-center bg-white">
-                <h3 className="font-bold text-base text-gray-900 mb-1 line-clamp-2">{official.name}</h3>
-                <p className="text-sm text-blue-600 font-medium">{official.designation}</p>
+              <CardBody className="bg-white px-4 py-4 text-center">
+                <h3 className="mb-1 line-clamp-2 text-base font-bold text-gray-900">{official.name}</h3>
+                <p className="text-sm font-medium text-blue-600">{official.designation}</p>
               </CardBody>
             </Card>
           ))}
         </div>
 
         {/* Additional Officials - 3 Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-4xl mx-auto">
+        <div className="mx-auto grid max-w-4xl grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {officials.slice(4).map((official, index) => (
-            <Card key={index} hover className="group overflow-hidden border-2 border-blue-100 hover:border-blue-300 transition-all duration-300">
+            <Card key={index} hover className="group overflow-hidden border border-blue-100 transition-all duration-300 hover:border-blue-300">
               <div className="relative">
-                <div className="aspect-[4/3] bg-gradient-to-br from-blue-100 via-white to-blue-50 flex items-center justify-center overflow-hidden">
-                  <Link href={official.profileUrl} target="_blank" rel="noopener noreferrer" className="relative block h-full w-full">
-                    <Image
-                      src={official.image}
-                      alt={official.name}
-                      fill
-                      className="object-cover transition-transform duration-500 group-hover:scale-105"
-                    />
-                  </Link>
+                <div className="relative flex h-44 items-center justify-center overflow-hidden bg-gradient-to-br from-blue-100 via-white to-blue-50 sm:h-48">
+                  <Image
+                    src={official.image}
+                    alt={official.name}
+                    fill
+                    className="object-contain object-bottom transition-transform duration-500 group-hover:scale-105"
+                  />
                 </div>
                 
                 {/* Blue Overlay on Hover */}
@@ -139,9 +134,9 @@ export default function OfficialsSection() {
               </div>
               
               {/* Card Body */}
-              <CardBody className="text-center bg-white">
-                <h3 className="font-bold text-base text-gray-900 mb-1 line-clamp-2">{official.name}</h3>
-                <p className="text-sm text-blue-600 font-medium">{official.designation}</p>
+              <CardBody className="bg-white px-4 py-4 text-center">
+                <h3 className="mb-1 line-clamp-2 text-base font-bold text-gray-900">{official.name}</h3>
+                <p className="text-sm font-medium text-blue-600">{official.designation}</p>
               </CardBody>
             </Card>
           ))}

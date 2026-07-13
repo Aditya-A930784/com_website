@@ -7,7 +7,7 @@ import { ROUTES } from '@/lib/constants/routes';
 import { useTranslation } from '@/lib/i18n/LanguageContext';
 
 export default function Footer() {
-  const { t, locale } = useTranslation();
+  const { t } = useTranslation();
 
   const footerLinks = {
     services: [
@@ -37,39 +37,39 @@ export default function Footer() {
   };
 
   return (
-    <footer className="bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900 text-white mt-auto" aria-label="Footer Area">
+    <footer className="mt-auto bg-slate-950 text-white" aria-label="Footer Area">
       {/* Main Footer */}
-      <div className="container-custom py-12 lg:py-16">
+      <div className="container-custom py-12 lg:py-14">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 lg:gap-12">
           {/* About Column */}
           <div className="lg:col-span-2 space-y-4">
             <div className="flex items-center gap-3">
-              <div className="w-14 h-14 bg-gradient-to-br from-orange-500 to-red-600 rounded-full flex items-center justify-center shadow-lg shrink-0 select-none">
-                <span className="text-white font-bold text-xl">CSMC</span>
+              <div className="w-14 h-14 bg-orange-600 rounded-lg flex items-center justify-center shadow-sm shrink-0 select-none">
+                <span className="text-white font-bold text-base">CSMC</span>
               </div>
               <div>
                 <h3 className="text-lg font-bold leading-tight">{t('footer.about_title')}</h3>
                 <p className="text-xs text-gray-400">{t('footer.about_sub')}</p>
               </div>
             </div>
-            <p className="text-gray-400 text-sm leading-relaxed max-w-sm">
+            <p className="text-slate-400 text-sm leading-relaxed max-w-sm">
               {t('footer.about_desc')}
             </p>
             
             {/* Contact Info */}
             <div className="space-y-3 pt-2">
               <div className="flex items-start gap-3 text-sm">
-                <MapPin size={18} className="text-orange-500 mt-0.5 shrink-0" aria-hidden />
-                <span className="text-gray-400 leading-normal">
+                <MapPin size={18} className="text-orange-400 mt-0.5 shrink-0" aria-hidden />
+                <span className="text-slate-400 leading-normal">
                   {t('footer.address')}
                 </span>
               </div>
-              <a href="tel:+911234567890" className="flex items-center gap-3 text-sm hover:text-orange-500 transition-colors min-h-[36px]" aria-label="Call CSMC Helpline: +91-1234567890">
-                <Phone size={18} className="text-orange-500 shrink-0" aria-hidden />
+              <a href="tel:+911234567890" className="flex items-center gap-3 text-sm hover:text-orange-400 transition-colors min-h-[36px]" aria-label="Call CSMC Helpline: +91-1234567890">
+                <Phone size={18} className="text-orange-400 shrink-0" aria-hidden />
                 <span>+91-1234567890</span>
               </a>
-              <a href="mailto:info@chhsambhajinagarmc.org" className="flex items-center gap-3 text-sm hover:text-orange-500 transition-colors min-h-[36px]" aria-label="Email CSMC support: info@chhsambhajinagarmc.org">
-                <Mail size={18} className="text-orange-500 shrink-0" aria-hidden />
+              <a href="mailto:info@chhsambhajinagarmc.org" className="flex items-center gap-3 text-sm hover:text-orange-400 transition-colors min-h-[36px]" aria-label="Email CSMC support: info@chhsambhajinagarmc.org">
+                <Mail size={18} className="text-orange-400 shrink-0" aria-hidden />
                 <span className="truncate">info@chhsambhajinagarmc.org</span>
               </a>
             </div>
@@ -80,7 +80,7 @@ export default function Footer() {
                 href="https://www.facebook.com/commr.abdmahapalika"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 bg-white/10 hover:bg-blue-600 rounded-full flex items-center justify-center transition-all hover:scale-110 min-w-[40px] min-h-[40px]"
+                className="w-10 h-10 bg-white/10 hover:bg-blue-600 rounded-lg flex items-center justify-center transition-colors min-w-[40px] min-h-[40px]"
                 aria-label="Facebook"
               >
                 <Facebook size={18} aria-hidden />
@@ -89,14 +89,14 @@ export default function Footer() {
                 href="https://www.instagram.com/csmcmahapalika/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 bg-white/10 hover:bg-pink-600 rounded-full flex items-center justify-center transition-all hover:scale-110 min-w-[40px] min-h-[40px]"
+                className="w-10 h-10 bg-white/10 hover:bg-pink-600 rounded-lg flex items-center justify-center transition-colors min-w-[40px] min-h-[40px]"
                 aria-label="Instagram"
               >
                 <Instagram size={18} aria-hidden />
               </a>
               <a
                 href="#"
-                className="w-10 h-10 bg-white/10 hover:bg-sky-500 rounded-full flex items-center justify-center transition-all hover:scale-110 min-w-[40px] min-h-[40px]"
+                className="w-10 h-10 bg-white/10 hover:bg-sky-500 rounded-lg flex items-center justify-center transition-colors min-w-[40px] min-h-[40px]"
                 aria-label="Twitter"
               >
                 <Twitter size={18} aria-hidden />
@@ -105,7 +105,7 @@ export default function Footer() {
                 href="https://www.youtube.com/channel/UCfty7aRYvcL3evtdIVytYUg"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 bg-white/10 hover:bg-red-600 rounded-full flex items-center justify-center transition-all hover:scale-110 min-w-[40px] min-h-[40px]"
+                className="w-10 h-10 bg-white/10 hover:bg-red-600 rounded-lg flex items-center justify-center transition-colors min-w-[40px] min-h-[40px]"
                 aria-label="YouTube"
               >
                 <Youtube size={18} aria-hidden />
@@ -119,7 +119,7 @@ export default function Footer() {
             <ul className="space-y-2.5">
               {footerLinks.services.map((link, index) => (
                 <li key={index}>
-                  <Link href={link.href} className="text-gray-400 hover:text-orange-500 transition-colors text-sm py-1 block">
+                  <Link href={link.href} className="text-slate-400 hover:text-orange-400 transition-colors text-sm py-1 block">
                     {t(link.labelKey)}
                   </Link>
                 </li>
@@ -133,7 +133,7 @@ export default function Footer() {
             <ul className="space-y-2.5">
               {footerLinks.quickLinks.map((link, index) => (
                 <li key={index}>
-                  <Link href={link.href} className="text-gray-400 hover:text-orange-500 transition-colors text-sm py-1 block">
+                  <Link href={link.href} className="text-slate-400 hover:text-orange-400 transition-colors text-sm py-1 block">
                     {t(link.labelKey)}
                   </Link>
                 </li>
@@ -151,7 +151,7 @@ export default function Footer() {
                     href={link.href} 
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-gray-400 hover:text-orange-500 transition-colors text-sm py-1 flex items-center gap-1.5 group"
+                    className="text-slate-400 hover:text-orange-400 transition-colors text-sm py-1 flex items-center gap-1.5 group"
                   >
                     <span>{link.label}</span>
                     <ExternalLink size={12} className="opacity-40 group-hover:opacity-100 transition-opacity shrink-0" aria-label="बाह्य दुवा" />
@@ -161,9 +161,9 @@ export default function Footer() {
             </ul>
 
             {/* Visitor Counter */}
-            <div className="p-4 bg-white/5 rounded-xl border border-white/10">
-              <div className="text-xs text-gray-400 mb-1 leading-none">{t('footer.visits')}</div>
-              <div className="text-2xl font-mono font-bold text-orange-500">1,50,448</div>
+            <div className="p-4 bg-white/5 rounded-lg border border-white/10">
+              <div className="text-xs text-slate-400 mb-1 leading-none">{t('footer.visits')}</div>
+              <div className="text-2xl font-mono font-bold text-orange-400">1,50,448</div>
             </div>
           </div>
         </div>

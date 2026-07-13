@@ -90,21 +90,28 @@ export default function OnlineServicesSection() {
   ] as const;
 
   return (
-    <section className="py-16 lg:py-24 bg-white" aria-labelledby="services-heading">
-      <div className="container-custom">
+    <section className="py-16 lg:py-24 bg-slate-50 relative overflow-hidden" aria-labelledby="services-heading">
+      <div className="container-custom relative z-10">
         {/* Section header */}
-        <div className="text-center mb-10">
-          <span className="inline-block bg-orange-100 text-orange-600 px-4 py-2 rounded-full text-sm font-medium mb-4">
+        <div className="text-center mb-12 space-y-4">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-orange-100 text-orange-800 text-sm font-bold mb-2">
+            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+            </svg>
             {t('home.services.tag')}
-          </span>
+          </div>
+          
           <h2
             id="services-heading"
-            className="text-3xl lg:text-4xl font-bold text-gray-900 mb-1"
+            className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-950 leading-tight"
           >
-            {t('home.services.title')}
+            <span className="block">{t('home.services.title')}</span>
+            <span className="text-orange-700">
+              Citizen Services
+            </span>
           </h2>
-          <p className="text-sm text-gray-400 mb-3">Citizen Services</p>
-          <p className="text-gray-600 max-w-2xl mx-auto text-sm leading-relaxed">
+          
+          <p className="text-base sm:text-lg text-slate-600 max-w-3xl mx-auto leading-relaxed">
             {t('home.services.description')}
           </p>
         </div>
@@ -113,44 +120,53 @@ export default function OnlineServicesSection() {
         <ServiceCardGrid
           services={primaryServices}
           viewAllHref={ROUTES.PUBLIC.SERVICES.BASE}
-          className="mb-10"
+          className="mb-16"
         />
 
-        {/* Quick links bar */}
-        <div className="bg-gradient-to-r from-orange-500 to-red-600 rounded-2xl p-6 sm:p-8 text-white shadow-lg">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            {quickLinks.map((item) => {
-              const Icon = item.icon;
-              return (
-                <Link
-                  key={item.titleMr}
-                  href={item.href}
-                  className="flex items-center gap-3 hover:bg-white/20 rounded-xl p-3 transition group min-h-[44px]"
-                  aria-label={`${item.titleMr} — ${item.titleEn}`}
-                >
-                  <Icon
-                    className="group-hover:scale-110 transition-transform shrink-0"
-                    size={24}
-                    aria-hidden
-                  />
-                  <div className="min-w-0">
-                    <p className="font-semibold text-sm leading-tight">
-                      {locale === 'mr' ? item.titleMr : item.titleEn}
-                    </p>
-                    <p className="text-xs text-white/80">
-                      {locale === 'mr' ? item.titleEn : item.titleMr}
-                    </p>
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
+        {/* Quick links bar - Modern Design */}
+        <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+              <h3 className="text-2xl font-black text-slate-950 mb-6 text-center sm:text-left">
+                Quick Access
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                {quickLinks.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <Link
+                      key={item.titleMr}
+                      href={item.href}
+                      className="group/link flex min-h-[80px] items-center gap-4 rounded-lg border border-slate-200 bg-slate-50 p-4 transition-all duration-300 hover:border-orange-200 hover:bg-orange-50 hover:shadow-sm active:scale-[0.98]"
+                      aria-label={`${item.titleMr} — ${item.titleEn}`}
+                    >
+                      <div className="flex-shrink-0 w-12 h-12 rounded-lg bg-orange-600 text-white flex items-center justify-center shadow-sm group-hover/link:scale-105 transition-all duration-300">
+                        <Icon size={24} aria-hidden />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="font-bold text-slate-900 text-sm leading-tight group-hover/link:text-orange-700 transition-colors">
+                          {locale === 'mr' ? item.titleMr : item.titleEn}
+                        </p>
+                        <p className="text-xs text-slate-500 mt-0.5">
+                          {locale === 'mr' ? item.titleEn : item.titleMr}
+                        </p>
+                      </div>
+                      <svg className="w-5 h-5 text-slate-400 group-hover/link:text-orange-600 group-hover/link:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </Link>
+                  );
+                })}
+              </div>
         </div>
 
         {/* Login indicator note */}
-        <p className="text-center text-xs text-gray-400 mt-4 leading-normal">
-          {t('home.services.legend')}
-        </p>
+        <div className="text-center mt-8">
+          <p className="inline-flex items-center gap-2 text-sm text-gray-500 bg-gray-100 px-4 py-2 rounded-full">
+            <svg className="w-4 h-4 text-orange-500" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+            </svg>
+            {t('home.services.legend')}
+          </p>
+        </div>
       </div>
     </section>
   );

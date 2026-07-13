@@ -11,7 +11,7 @@ export const Card = React.forwardRef<HTMLDivElement, CardProps>(
       <div
         ref={ref}
         className={cn(
-          'bg-white rounded-lg shadow-md overflow-hidden',
+          'overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm',
           hover && 'card-hover',
           className
         )}
@@ -27,7 +27,7 @@ Card.displayName = 'Card';
 
 export const CardHeader = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
   ({ className, ...props }, ref) => {
-    return <div ref={ref} className={cn('px-6 py-4 border-b', className)} {...props} />;
+    return <div ref={ref} className={cn('border-b border-slate-200 px-6 py-4', className)} {...props} />;
   }
 );
 
@@ -35,7 +35,7 @@ CardHeader.displayName = 'CardHeader';
 
 export const CardBody = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
   ({ className, ...props }, ref) => {
-    return <div ref={ref} className={cn('px-6 py-4', className)} {...props} />;
+    return <div ref={ref} className={cn('px-6 py-5', className)} {...props} />;
   }
 );
 
@@ -43,7 +43,7 @@ CardBody.displayName = 'CardBody';
 
 export const CardFooter = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
   ({ className, ...props }, ref) => {
-    return <div ref={ref} className={cn('px-6 py-4 border-t bg-gray-50', className)} {...props} />;
+    return <div ref={ref} className={cn('border-t border-slate-200 bg-slate-50 px-6 py-4', className)} {...props} />;
   }
 );
 

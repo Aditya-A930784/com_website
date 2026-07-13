@@ -15,17 +15,17 @@ export default function AboutSection() {
   const { t } = useTranslation();
 
   return (
-    <section className="py-16 lg:py-24 bg-gradient-to-b from-white to-gray-50" aria-labelledby="about-heading">
+    <section className="py-16 lg:py-24 bg-white" aria-labelledby="about-heading">
       <div className="container-custom">
         {/* Section header */}
         <div className="text-center mb-12">
-          <span className="inline-block bg-orange-100 text-orange-600 px-4 py-2 rounded-full text-sm font-medium mb-4">
+          <span className="inline-block bg-orange-100 text-orange-800 px-4 py-2 rounded-lg text-sm font-medium mb-4">
             {t('home.about.tag')}
           </span>
-          <h2 id="about-heading" className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+          <h2 id="about-heading" className="text-3xl lg:text-4xl font-bold text-slate-950 mb-4">
             {t('home.about.title')}
           </h2>
-          <p className="text-gray-600 max-w-2xl mx-auto text-sm leading-relaxed">
+          <p className="text-slate-600 max-w-2xl mx-auto text-sm leading-relaxed">
             {t('home.about.subtitle')}
           </p>
         </div>
@@ -33,10 +33,10 @@ export default function AboutSection() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center mb-12">
           {/* Left - Visual landmark */}
           <div className="relative">
-            <div className="aspect-video bg-gradient-to-br from-orange-200 to-red-200 rounded-2xl overflow-hidden shadow-xl flex items-center justify-center">
+            <div className="aspect-video bg-gradient-to-br from-orange-100 to-sky-100 rounded-lg overflow-hidden shadow-sm ring-1 ring-slate-200 flex items-center justify-center">
               <Landmark className="text-orange-700" size={90} strokeWidth={1.6} aria-hidden />
             </div>
-            <div className="absolute -bottom-6 -right-6 bg-orange-600 text-white p-6 rounded-xl shadow-lg animate-bounce-slow">
+            <div className="absolute -bottom-6 -right-6 bg-orange-600 text-white p-6 rounded-lg shadow-lg">
               <div className="text-3xl font-bold">1936</div>
               <div className="text-sm font-medium">{t('home.about.est_label')}</div>
             </div>

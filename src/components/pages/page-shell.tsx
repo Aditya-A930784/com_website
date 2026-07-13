@@ -11,18 +11,18 @@ interface PageShellProps {
 
 export default function PageShell({ eyebrow, title, description, children }: PageShellProps) {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
-      <section className="py-16 md:py-20">
+    <div className="min-h-screen bg-slate-50">
+      <section className="py-12 md:py-16">
         <div className="container-custom">
-          <div className="max-w-3xl mb-10">
-            <p className="text-sm font-semibold tracking-[0.3em] text-primary-700 uppercase mb-3">
+          <div className="mb-8 max-w-3xl">
+            <p className="mb-3 text-sm font-semibold uppercase text-orange-700">
               {eyebrow}
             </p>
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">{title}</h1>
-            <p className="text-lg text-gray-600">{description}</p>
+            <h1 className="mb-4 text-3xl font-bold tracking-tight text-slate-950 md:text-5xl">{title}</h1>
+            <p className="text-lg text-slate-600">{description}</p>
           </div>
 
-          <Card className="border border-gray-100 shadow-sm">
+          <Card className="border-slate-200 shadow-sm">
             <CardBody>{children}</CardBody>
           </Card>
         </div>

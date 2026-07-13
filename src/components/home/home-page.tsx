@@ -16,7 +16,7 @@ export default function HomePage() {
     <div className="min-h-screen flex flex-col">
       <Header />
 
-      <main className="flex-grow">
+      <main id="main-content" className="flex-grow">
         <HeroSection />
         <AboutSection />
         <FeatureProcessSection />

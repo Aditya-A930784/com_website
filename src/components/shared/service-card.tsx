@@ -1,4 +1,3 @@
-import Image from 'next/image';
 import Link from 'next/link';
 import { Lock, ArrowRight, type LucideIcon } from 'lucide-react';
 import { cn } from '@/lib/utils/cn';
@@ -26,15 +25,7 @@ export interface ServiceCardProps {
 /**
  * ServiceCard — reusable card for displaying a single citizen service.
  *
- * Uses CSS container queries (@container) so the card adapts its own
- * internal layout based on the column width it occupies, not the
- * viewport width. This lets a 2-col mobile grid and a 6-col desktop
- * grid both get the right layout from one component.
- *
- * Spec refs:
- * - csmc-website-redesign-spec.md §5.1 (homepage cards)
- * - csmc-adaptation-instructions.md §2 (ServiceCard spec)
- * - REQ-PER-08 (container queries on ServiceCard)
+ * Modern design with glassmorphism, gradients, and smooth animations
  */
 export function ServiceCard({
   titleMr,
@@ -57,60 +48,69 @@ export function ServiceCard({
       >
         <div
           className={cn(
-            'h-full rounded-xl border-2 border-transparent bg-white shadow-sm',
+            'relative h-full rounded-lg bg-white shadow-sm border border-slate-200',
             'transition-all duration-300',
-            'hover:border-orange-300 hover:shadow-md hover:-translate-y-0.5',
+            'hover:shadow-lg hover:border-orange-200 hover:-translate-y-1',
+            'overflow-hidden',
             // Compact layout (narrow columns — mobile 2-col, desktop 6-col)
-            'flex flex-col items-center gap-2 p-4',
+            'flex flex-col items-center gap-4 p-6',
             // Wide layout at ≥120px container width — add description, horizontal layout
-            '@[120px]:flex-row @[120px]:items-center @[120px]:gap-3 @[120px]:p-4',
+            '@[120px]:flex-row @[120px]:items-center @[120px]:gap-4 @[120px]:p-5',
             // Revert to vertical at ≥220px (card is wide enough to be vertical again)
-            '@[220px]:flex-col @[220px]:items-center @[220px]:p-5'
+            '@[220px]:flex-col @[220px]:items-center @[220px]:p-6'
           )}
         >
+          {/* Gradient Background Effect */}
+          <div className="absolute inset-0 bg-gradient-to-br from-orange-50/70 via-transparent to-sky-50/70 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+          
           {/* Icon container */}
           <div
             className={cn(
-              'relative shrink-0 rounded-xl flex items-center justify-center',
-              'w-12 h-12 @[220px]:w-14 @[220px]:h-14',
+              'relative shrink-0 rounded-lg flex items-center justify-center z-10',
+              'w-14 h-14 @[220px]:w-16 @[220px]:h-16',
               bgColor,
-              'group-hover:scale-110 transition-transform duration-300'
+              'ring-1 ring-inset ring-black/5',
+              'group-hover:scale-105 transition-all duration-300'
             )}
           >
             <Icon
               className={iconColor}
-              size={24}
+              size={28}
+              strokeWidth={2.5}
               aria-hidden
             />
             {requiresLogin && (
               <span
-                className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-amber-500"
+                className="absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full bg-amber-500 shadow-sm"
                 aria-label="लॉगिन आवश्यक"
               >
-                <Lock size={8} className="text-white" aria-hidden />
+                <Lock size={12} className="text-white" aria-hidden />
               </span>
             )}
           </div>
 
           {/* Text */}
-          <div className="min-w-0 text-center @[120px]:text-left @[220px]:text-center">
-            <p className="text-sm font-semibold leading-snug text-gray-900 group-hover:text-orange-600 transition-colors">
+          <div className="min-w-0 text-center @[120px]:text-left @[220px]:text-center z-10 flex-1">
+            <p className="text-base @[220px]:text-lg font-bold leading-tight text-slate-900 group-hover:text-orange-700 transition-colors duration-300">
               {titleMr}
             </p>
-            <p className="mt-0.5 text-xs text-gray-400">{titleEn}</p>
+            <p className="mt-1 text-xs @[220px]:text-sm text-slate-500 font-medium">{titleEn}</p>
             {description && (
-              <p className="mt-1 hidden text-xs text-gray-500 @[220px]:block line-clamp-2">
+              <p className="mt-2 hidden text-xs text-slate-600 @[220px]:block line-clamp-2 leading-relaxed">
                 {description}
               </p>
             )}
           </div>
 
           {/* Arrow — only visible at wider container sizes */}
-          <ArrowRight
-            size={14}
-            className="hidden shrink-0 text-gray-300 transition-colors group-hover:text-orange-400 @[220px]:block ml-auto"
-            aria-hidden
-          />
+          <div className="hidden @[220px]:flex items-center justify-center w-9 h-9 rounded-full bg-slate-100 group-hover:bg-orange-100 transition-all duration-300 z-10 ml-auto">
+            <ArrowRight
+              size={18}
+              className="text-slate-500 group-hover:text-orange-700 group-hover:translate-x-1 transition-all duration-300"
+              aria-hidden
+            />
+          </div>
+          
         </div>
       </Link>
     </div>

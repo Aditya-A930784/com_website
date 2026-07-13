@@ -63,7 +63,7 @@ export default async function HeroSection() {
 
   return (
     <section
-      className="relative h-[48vh] min-h-[320px] overflow-hidden sm:h-[58vh] lg:h-[68vh]"
+      className="relative h-[48vh] min-h-[340px] overflow-hidden sm:h-[58vh] lg:h-[68vh]"
       aria-label="Home image slider"
     >
       {/* Dark base layer — prevents flash of unstyled content while images load */}
@@ -85,7 +85,7 @@ export default async function HeroSection() {
           heroSlides.map((slide, index) => (
             <div
               key={slide}
-              className={`${MOTION_CLASSES[index % MOTION_CLASSES.length]} absolute inset-0`}
+              className={`hero-slide ${MOTION_CLASSES[index % MOTION_CLASSES.length]} absolute inset-0`}
               style={{
                 ['--delay' as string]: `${index * slotSeconds}s`,
                 ['--cycle' as string]: `${totalCycleSeconds}s`,
@@ -108,6 +108,23 @@ export default async function HeroSection() {
             </div>
           ))
         )}
+      </div>
+
+      <div className="absolute inset-0 bg-gradient-to-r from-slate-950/55 via-slate-950/20 to-transparent" aria-hidden="true" />
+      <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-slate-50 to-transparent" aria-hidden="true" />
+
+      <div className="container-custom relative z-10 flex h-full items-end pb-10 sm:pb-14">
+        <div className="max-w-2xl text-white">
+          <p className="mb-3 inline-flex rounded-lg bg-white/15 px-3 py-1.5 text-sm font-semibold backdrop-blur-md ring-1 ring-white/20">
+            CSMC Citizen Portal
+          </p>
+          <h2 className="text-3xl font-bold tracking-tight sm:text-5xl">
+            Smart municipal services for every citizen
+          </h2>
+          <p className="mt-4 max-w-xl text-base text-white/85 sm:text-lg">
+            Access payments, certificates, complaints, notices and public information in one place.
+          </p>
+        </div>
       </div>
     </section>
   );

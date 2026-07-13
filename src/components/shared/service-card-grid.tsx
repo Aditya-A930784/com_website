@@ -13,45 +13,44 @@ interface ServiceCardGridProps {
 /**
  * ServiceCardGrid — responsive grid of ServiceCard components.
  *
- * Layout:
- * - Mobile (2 columns): compact icon+label stacked cards
- * - Tablet (3 columns): slightly larger
- * - Desktop (6 columns): all 6 primary cards in a single row
- *
- * Container queries on each ServiceCard handle internal card layout.
- * This grid component handles only the outer grid structure.
- *
- * Spec: 4-6 large tappable cards above the fold, icon + Marathi label + English subtitle
- * — csmc-website-redesign-spec.md §5.1
- * — csmc-adaptation-instructions.md §2
- *
- * DOM requirement: This component must render ABOVE any leadership/officials section.
+ * Modern grid layout with improved spacing and visual hierarchy
  */
 export function ServiceCardGrid({ services, viewAllHref, className }: ServiceCardGridProps) {
   const primary = services.slice(0, 6);
 
   return (
-    <div className={cn('space-y-3', className)}>
+    <div className={cn('space-y-8', className)}>
       <ul
-        className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3"
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 lg:gap-5"
         role="list"
         aria-label="नागरी सेवा"
       >
-        {primary.map((service) => (
-          <li key={service.titleMr} role="listitem">
+        {primary.map((service, index) => (
+          <li 
+            key={service.titleMr} 
+            role="listitem"
+            className="animate-fade-in-up"
+            style={{ animationDelay: `${index * 100}ms` }}
+          >
             <ServiceCard {...service} className="h-full" />
           </li>
         ))}
       </ul>
 
       {viewAllHref && (
-        <div className="text-center pt-1">
+        <div className="text-center pt-4">
           <Link
             href={viewAllHref}
-            className="inline-flex items-center gap-1.5 rounded-full border border-orange-300 bg-orange-50 px-5 py-2 text-sm font-medium text-orange-700 hover:bg-orange-100 hover:border-orange-400 transition-all min-h-[44px]"
+            className="group inline-flex min-h-[52px] items-center gap-3 rounded-lg bg-orange-600 px-7 py-3 text-base font-bold text-white shadow-sm transition-all duration-300 hover:bg-orange-700 hover:shadow-md active:scale-[0.98]"
           >
-            सर्व सेवा पाहा
-            <span className="text-xs text-orange-400">All Services →</span>
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+            <span>सर्व सेवा पाहा</span>
+            <span className="text-sm text-white/80">View All Services</span>
+            <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
           </Link>
         </div>
       )}
