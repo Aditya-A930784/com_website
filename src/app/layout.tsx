@@ -3,6 +3,7 @@ import { Inter, Noto_Sans_Devanagari } from 'next/font/google';
 import './globals.css';
 import { Toaster } from 'react-hot-toast';
 import { LanguageProvider } from '@/lib/i18n/LanguageContext';
+import FloatingApps from '@/components/shared/floating-apps/FloatingApps';
 
 const inter = Inter({ 
   subsets: ['latin'],
@@ -58,6 +59,7 @@ export default function RootLayout({
       <body className="font-marathi antialiased">
         <LanguageProvider>
           {children}
+          <FloatingApps />
         </LanguageProvider>
         <Toaster position="top-right" />
       </body>
