@@ -39,6 +39,7 @@ export default function RootLayout({
   return (
     <html lang="mr" className={`${inter.variable} ${notoSansDevanagari.variable}`}>
       <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <script
           dangerouslySetInnerHTML={{
             __html: `

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { Card, CardBody } from '@/components/ui/card';
 
@@ -64,10 +64,45 @@ const officials = [
 ];
 
 export default function OfficialsSection() {
-  const [selected, setSelected] = useState<any | null>(null);
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const modalRef = useRef<HTMLDivElement | null>(null);
+  const lastActiveRef = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) entry.target.classList.add('visible');
+        });
+      },
+      { threshold: 0.12 }
+    );
+
+    document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if (e.key === 'Escape') setOpenIndex(null);
+    }
+    if (openIndex !== null) document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [openIndex]);
+
+  function openModal(i: number) {
+    lastActiveRef.current = document.activeElement as HTMLElement | null;
+    setOpenIndex(i);
+    setTimeout(() => modalRef.current?.focus(), 50);
+  }
+
+  function closeModal() {
+    setOpenIndex(null);
+    lastActiveRef.current?.focus();
+  }
 
   return (
-    <section className="py-12 lg:py-20 bg-gradient-to-b from-blue-50 to-white">
+    <section className="py-16 lg:py-24 bg-gradient-to-b from-blue-50 to-white">
       <div className="container-custom">
         {/* Header */}
         <div className="text-center mb-12">
@@ -82,117 +117,93 @@ export default function OfficialsSection() {
           </p>
         </div>
 
-        {/* Mobile compact scroller */}
-        <div className="sm:hidden mb-6">
-          <div className="-mx-4 px-4 overflow-x-auto touch-pan-x snap-x snap-mandatory">
-            <div className="flex gap-4">
-              {officials.map((o, i) => (
-                <a
-                  key={i}
-                  href={o.profileUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  onClick={(e) => { e.preventDefault(); setSelected(o); }}
-                  role="button"
-                  className="min-w-[110px] flex-shrink-0 bg-white/80 backdrop-blur rounded-xl p-3 shadow-sm hover:shadow-md transition snap-start"
+        <div className="mx-auto max-w-6xl py-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
+            {officials.map((official, index) => (
+              <div
+                key={index}
+                className={`reveal`} 
+                style={{ transitionDelay: `${index * 80}ms` }}
+              >
+                <Card
+                  hover
+                  className="official-card p-0"
+                  role="listitem"
                 >
-                  <div className="w-16 h-16 mx-auto mb-2 overflow-hidden rounded-full ring-2 ring-orange-200">
-                    <Image src={o.image} alt={o.name} width={64} height={64} className="object-cover" />
+                  <div className="flex flex-col items-center justify-between h-[360px] px-6 pt-6">
+                    <div className="flex flex-col items-center">
+                      <div className="w-20 h-20 rounded-full overflow-hidden official-avatar">
+                        <Image
+                          src={official.image}
+                          alt={official.name}
+                          width={80}
+                          height={80}
+                          className="object-cover w-full h-full"
+                          loading="lazy"
+                        />
+                      </div>
+
+                      <h3 className="mt-5 text-[22px] font-bold text-gray-900 text-center leading-tight">
+                        {official.name}
+                      </h3>
+                      <p className="mt-2 text-[16px] font-semibold text-[#F58220]">{official.designation}</p>
+                      <p className="mt-1 text-sm text-gray-500">{official.department}</p>
+                    </div>
+
+                    <div className="w-full mt-4 pb-6 flex justify-center">
+                      <button
+                        className="btn-primary rounded-[10px] px-4 py-2 text-sm"
+                        onClick={() => openModal(index)}
+                        aria-haspopup="dialog"
+                        aria-controls={`official-modal-${index}`}
+                      >
+                        View Profile
+                      </button>
+                    </div>
                   </div>
-                  <h4 className="text-sm font-semibold text-center text-gray-900 leading-5 line-clamp-2">{o.name}</h4>
-                  <p className="text-xs text-center text-orange-600 mt-1">{o.designation}</p>
-                </a>
-              ))}
-            </div>
+                </Card>
+              </div>
+            ))}
           </div>
         </div>
 
-        {/* Top Officials Grid - 4 Cards */}
-        <div className="hidden sm:block mx-auto mb-8 grid max-w-6xl grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {officials.slice(0, 4).map((official, index) => (
-            <Card key={index} hover onClick={() => setSelected(official)} className="group overflow-hidden border border-blue-100 transition-all duration-300 hover:border-blue-300 cursor-pointer enter-up">
-              <div className="relative">
-                {/* Image Container */}
-                <div className="relative flex h-44 items-center justify-center overflow-hidden bg-gradient-to-br from-blue-100 via-white to-blue-50">
-                  <Image
-                    src={official.image}
-                    alt={official.name}
-                    width={300}
-                    height={220}
-                    className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
-                  />
-                </div>
-                
-                {/* Blue Overlay on Hover */}
-                <div className="absolute inset-0 bg-gradient-to-t from-blue-900/90 via-blue-900/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
-                  <div className="p-4 text-white w-full">
-                    <p className="text-sm font-medium">{official.department}</p>
-                    <p className="text-xs text-blue-200 mt-1">{official.bio}</p>
+        {/* Modal */}
+        {openIndex !== null && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center officials-modal-backdrop"
+            role="presentation"
+            onClick={(e) => { if (e.target === e.currentTarget) closeModal(); }}
+          >
+            <div
+              id={`official-modal-${openIndex}`}
+              className="officials-modal bg-white p-6 shadow-xl"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby={`official-modal-title-${openIndex}`}
+              tabIndex={-1}
+              ref={modalRef}
+            >
+              <div className="flex justify-between items-start gap-4">
+                <div className="flex items-start gap-4">
+                  <div className="w-20 h-20 rounded-full overflow-hidden official-avatar">
+                    <Image src={officials[openIndex].image} alt={officials[openIndex].name} width={80} height={80} className="object-cover w-full h-full" />
+                  </div>
+                  <div>
+                    <h2 id={`official-modal-title-${openIndex}`} className="text-2xl font-bold text-gray-900">{officials[openIndex].name}</h2>
+                    <p className="text-sm font-semibold text-[#F58220] mt-1">{officials[openIndex].designation}</p>
+                    <p className="text-xs text-gray-500 mt-1">{officials[openIndex].department}</p>
                   </div>
                 </div>
-              </div>
-              
-              {/* Card Body */}
-              <CardBody className="bg-white px-4 py-3 text-center">
-                <h3 className="mb-0.5 line-clamp-2 text-sm font-semibold text-gray-900">{official.name}</h3>
-                <p className="text-xs font-medium text-orange-600">{official.designation}</p>
-              </CardBody>
-            </Card>
-          ))}
-        </div>
 
-        {/* Additional Officials - 3 Cards */}
-        <div className="mx-auto grid max-w-4xl grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {officials.slice(4).map((official, index) => (
-            <Card key={index} hover onClick={() => setSelected(official)} className="group overflow-hidden border border-blue-100 transition-all duration-300 hover:border-blue-300 cursor-pointer enter-up">
-              <div className="relative">
-                <div className="relative flex h-36 items-center justify-center overflow-hidden bg-gradient-to-br from-blue-100 via-white to-blue-50">
-                  <Image
-                    src={official.image}
-                    alt={official.name}
-                    width={260}
-                    height={180}
-                    className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
-                  />
-                </div>
-                
-                {/* Blue Overlay on Hover */}
-                <div className="absolute inset-0 bg-gradient-to-t from-blue-900/90 via-blue-900/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
-                  <div className="p-4 text-white w-full">
-                    <p className="text-sm font-medium">{official.department}</p>
-                    <p className="text-xs text-blue-200 mt-1">{official.bio}</p>
-                  </div>
-                </div>
-              </div>
-              
-              {/* Card Body */}
-              <CardBody className="bg-white px-4 py-3 text-center">
-                <h3 className="mb-0.5 line-clamp-2 text-sm font-semibold text-gray-900">{official.name}</h3>
-                <p className="text-xs font-medium text-orange-600">{official.designation}</p>
-              </CardBody>
-            </Card>
-          ))}
-        </div>
-
-        {/* Modal for full bio */}
-        {selected && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <div className="absolute inset-0 bg-black/50" onClick={() => setSelected(null)} />
-            <div className="relative bg-white rounded-xl shadow-xl max-w-md w-full mx-auto p-6 z-10 transform transition-all">
-              <div className="flex items-start gap-4">
-                <div className="w-20 h-20 rounded-full overflow-hidden ring-2 ring-orange-100 flex-shrink-0">
-                  <Image src={selected.image} alt={selected.name} width={80} height={80} className="object-cover" />
-                </div>
                 <div>
-                  <h3 className="text-lg font-bold text-gray-900">{selected.name}</h3>
-                  <p className="text-sm text-orange-600">{selected.designation}</p>
-                  <p className="text-xs text-gray-500 mt-1">{selected.department}</p>
+                  <button aria-label="Close profile" className="p-2 rounded-md hover:bg-gray-100" onClick={closeModal}>✕</button>
                 </div>
               </div>
-              <p className="mt-4 text-sm text-gray-700">{selected.bio}</p>
-              <div className="mt-4 flex justify-end gap-2">
-                <a href={selected.profileUrl} target="_blank" rel="noreferrer" className="px-4 py-2 text-sm font-medium bg-blue-600 text-white rounded-md">प्रोफाइल पहा</a>
-                <button onClick={() => setSelected(null)} className="px-4 py-2 text-sm font-medium bg-gray-100 rounded-md">Close</button>
+
+              <div className="mt-4 prose prose-sm text-sm text-gray-700">
+                <p><strong>Biography:</strong> {officials[openIndex].bio || 'Biography not available.'}</p>
+                <p className="mt-2"><strong>Responsibilities:</strong> Leading and representing the department — details to be added.</p>
+                <p className="mt-2"><strong>Contact:</strong> <a href={officials[openIndex].profileUrl} className="text-blue-600 underline">Official page</a></p>
               </div>
             </div>
           </div>
