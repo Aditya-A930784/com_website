@@ -77,69 +77,29 @@ export default function OfficialsSection() {
           </p>
         </div>
 
-        {/* Top Officials Grid - 4 Cards */}
-        <div className="mx-auto mb-8 grid max-w-6xl grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {officials.slice(0, 4).map((official, index) => (
-            <Card key={index} hover className="group overflow-hidden border border-blue-100 transition-all duration-300 hover:border-blue-300">
-              <div className="relative">
-                {/* Image Container */}
-                <div className="relative flex h-56 items-center justify-center overflow-hidden bg-gradient-to-br from-blue-100 via-white to-blue-50 sm:h-60 lg:h-56">
+        {/* Officials - card grid (responsive 1/2/3 columns) like screenshot */}
+        <div className="mx-auto max-w-6xl py-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {officials.map((official, index) => (
+              <Card key={index} hover className="overflow-hidden border border-blue-100 max-w-sm mx-auto">
+                <div className="relative h-36 bg-gradient-to-br from-blue-100 via-white to-blue-50 flex items-center justify-center rounded-t-lg overflow-hidden">
                   <Image
                     src={official.image}
                     alt={official.name}
-                    fill
-                    className="object-contain object-bottom transition-transform duration-500 group-hover:scale-105"
+                    width={320}
+                    height={180}
+                    className="object-cover w-full h-full"
                   />
+                  <div className="absolute inset-0 bg-gradient-to-t from-blue-900/0 to-blue-900/8 opacity-0 hover:opacity-100 transition-opacity duration-200" />
                 </div>
-                
-                {/* Blue Overlay on Hover */}
-                <div className="absolute inset-0 bg-gradient-to-t from-blue-900/90 via-blue-900/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
-                  <div className="p-4 text-white w-full">
-                    <p className="text-sm font-medium">{official.department}</p>
-                    <p className="text-xs text-blue-200 mt-1">{official.bio}</p>
-                  </div>
-                </div>
-              </div>
-              
-              {/* Card Body */}
-              <CardBody className="bg-white px-4 py-4 text-center">
-                <h3 className="mb-1 line-clamp-2 text-base font-bold text-gray-900">{official.name}</h3>
-                <p className="text-sm font-medium text-blue-600">{official.designation}</p>
-              </CardBody>
-            </Card>
-          ))}
-        </div>
 
-        {/* Additional Officials - 3 Cards */}
-        <div className="mx-auto grid max-w-4xl grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {officials.slice(4).map((official, index) => (
-            <Card key={index} hover className="group overflow-hidden border border-blue-100 transition-all duration-300 hover:border-blue-300">
-              <div className="relative">
-                <div className="relative flex h-44 items-center justify-center overflow-hidden bg-gradient-to-br from-blue-100 via-white to-blue-50 sm:h-48">
-                  <Image
-                    src={official.image}
-                    alt={official.name}
-                    fill
-                    className="object-contain object-bottom transition-transform duration-500 group-hover:scale-105"
-                  />
-                </div>
-                
-                {/* Blue Overlay on Hover */}
-                <div className="absolute inset-0 bg-gradient-to-t from-blue-900/90 via-blue-900/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
-                  <div className="p-4 text-white w-full">
-                    <p className="text-sm font-medium">{official.department}</p>
-                    <p className="text-xs text-blue-200 mt-1">{official.bio}</p>
-                  </div>
-                </div>
-              </div>
-              
-              {/* Card Body */}
-              <CardBody className="bg-white px-4 py-4 text-center">
-                <h3 className="mb-1 line-clamp-2 text-base font-bold text-gray-900">{official.name}</h3>
-                <p className="text-sm font-medium text-blue-600">{official.designation}</p>
-              </CardBody>
-            </Card>
-          ))}
+                <CardBody className="bg-white px-4 py-4 text-center">
+                  <h3 className="mb-1 text-sm font-semibold text-gray-900">{official.name}</h3>
+                  <p className="text-xs font-medium text-blue-600">{official.designation}</p>
+                </CardBody>
+              </Card>
+            ))}
+          </div>
         </div>
 
       </div>
