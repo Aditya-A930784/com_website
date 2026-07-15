@@ -78,24 +78,25 @@ export default function OfficialsSection() {
         </div>
 
         {/* Officials - card grid (responsive 1/2/3 columns) like screenshot */}
-        <div className="mx-auto max-w-6xl py-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="mx-auto max-w-6xl py-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 items-start">
             {officials.map((official, index) => (
-              <Card key={index} hover className="overflow-hidden border border-blue-100 max-w-sm mx-auto">
-                <div className="relative h-36 bg-gradient-to-br from-blue-100 via-white to-blue-50 flex items-center justify-center rounded-t-lg overflow-hidden">
-                  <Image
-                    src={official.image}
-                    alt={official.name}
-                    width={320}
-                    height={180}
-                    className="object-cover w-full h-full"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-blue-900/0 to-blue-900/8 opacity-0 hover:opacity-100 transition-opacity duration-200" />
+              <Card key={index} hover className="overflow-hidden rounded-xl shadow-lg border border-blue-100 max-w-xs mx-auto bg-white">
+                <div className="flex justify-center bg-white p-6">
+                  <div className="w-40 h-40 bg-white rounded-md overflow-hidden shadow-sm flex items-center justify-center">
+                    <Image
+                      src={official.image}
+                      alt={official.name}
+                      width={280}
+                      height={280}
+                      className="object-contain w-full h-full bg-white"
+                    />
+                  </div>
                 </div>
 
-                <CardBody className="bg-white px-4 py-4 text-center">
-                  <h3 className="mb-1 text-sm font-semibold text-gray-900">{official.name}</h3>
-                  <p className="text-xs font-medium text-blue-600">{official.designation}</p>
+                <CardBody className="bg-white px-6 pb-8 pt-2 text-center">
+                  <h3 className="mb-1 text-base font-bold text-gray-900">{official.name}</h3>
+                  <p className="text-sm text-gray-500">{official.designation}</p>
                 </CardBody>
               </Card>
             ))}
