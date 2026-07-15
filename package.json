@@ -6,7 +6,7 @@
   "author": "Your Organization",
   "license": "MIT",
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 3001",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
@@ -28,6 +28,7 @@
     "axios": "^1.6.0",
     "clsx": "^2.1.0",
     "date-fns": "^3.6.0",
+    "expo": "^57.0.4",
     "firebase": "^10.11.0",
     "firebase-admin": "^12.1.0",
     "framer-motion": "^11.0.0",
