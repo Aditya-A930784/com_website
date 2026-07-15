@@ -1,3 +1,6 @@
+"use client";
+
+import React, { useState } from 'react';
 import Image from 'next/image';
 import { Card, CardBody } from '@/components/ui/card';
 
@@ -61,8 +64,10 @@ const officials = [
 ];
 
 export default function OfficialsSection() {
+  const [selected, setSelected] = useState<any | null>(null);
+
   return (
-    <section className="py-16 lg:py-24 bg-gradient-to-b from-blue-50 to-white">
+    <section className="py-12 lg:py-20 bg-gradient-to-b from-blue-50 to-white">
       <div className="container-custom">
         {/* Header */}
         <div className="text-center mb-12">
@@ -77,18 +82,44 @@ export default function OfficialsSection() {
           </p>
         </div>
 
+        {/* Mobile compact scroller */}
+        <div className="sm:hidden mb-6">
+          <div className="-mx-4 px-4 overflow-x-auto touch-pan-x snap-x snap-mandatory">
+            <div className="flex gap-4">
+              {officials.map((o, i) => (
+                <a
+                  key={i}
+                  href={o.profileUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  onClick={(e) => { e.preventDefault(); setSelected(o); }}
+                  role="button"
+                  className="min-w-[110px] flex-shrink-0 bg-white/80 backdrop-blur rounded-xl p-3 shadow-sm hover:shadow-md transition snap-start"
+                >
+                  <div className="w-16 h-16 mx-auto mb-2 overflow-hidden rounded-full ring-2 ring-orange-200">
+                    <Image src={o.image} alt={o.name} width={64} height={64} className="object-cover" />
+                  </div>
+                  <h4 className="text-sm font-semibold text-center text-gray-900 leading-5 line-clamp-2">{o.name}</h4>
+                  <p className="text-xs text-center text-orange-600 mt-1">{o.designation}</p>
+                </a>
+              ))}
+            </div>
+          </div>
+        </div>
+
         {/* Top Officials Grid - 4 Cards */}
-        <div className="mx-auto mb-8 grid max-w-6xl grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="hidden sm:block mx-auto mb-8 grid max-w-6xl grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {officials.slice(0, 4).map((official, index) => (
-            <Card key={index} hover className="group overflow-hidden border border-blue-100 transition-all duration-300 hover:border-blue-300">
+            <Card key={index} hover onClick={() => setSelected(official)} className="group overflow-hidden border border-blue-100 transition-all duration-300 hover:border-blue-300 cursor-pointer enter-up">
               <div className="relative">
                 {/* Image Container */}
-                <div className="relative flex h-56 items-center justify-center overflow-hidden bg-gradient-to-br from-blue-100 via-white to-blue-50 sm:h-60 lg:h-56">
+                <div className="relative flex h-44 items-center justify-center overflow-hidden bg-gradient-to-br from-blue-100 via-white to-blue-50">
                   <Image
                     src={official.image}
                     alt={official.name}
-                    fill
-                    className="object-contain object-bottom transition-transform duration-500 group-hover:scale-105"
+                    width={300}
+                    height={220}
+                    className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
                   />
                 </div>
                 
@@ -102,9 +133,9 @@ export default function OfficialsSection() {
               </div>
               
               {/* Card Body */}
-              <CardBody className="bg-white px-4 py-4 text-center">
-                <h3 className="mb-1 line-clamp-2 text-base font-bold text-gray-900">{official.name}</h3>
-                <p className="text-sm font-medium text-blue-600">{official.designation}</p>
+              <CardBody className="bg-white px-4 py-3 text-center">
+                <h3 className="mb-0.5 line-clamp-2 text-sm font-semibold text-gray-900">{official.name}</h3>
+                <p className="text-xs font-medium text-orange-600">{official.designation}</p>
               </CardBody>
             </Card>
           ))}
@@ -113,14 +144,15 @@ export default function OfficialsSection() {
         {/* Additional Officials - 3 Cards */}
         <div className="mx-auto grid max-w-4xl grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {officials.slice(4).map((official, index) => (
-            <Card key={index} hover className="group overflow-hidden border border-blue-100 transition-all duration-300 hover:border-blue-300">
+            <Card key={index} hover onClick={() => setSelected(official)} className="group overflow-hidden border border-blue-100 transition-all duration-300 hover:border-blue-300 cursor-pointer enter-up">
               <div className="relative">
-                <div className="relative flex h-44 items-center justify-center overflow-hidden bg-gradient-to-br from-blue-100 via-white to-blue-50 sm:h-48">
+                <div className="relative flex h-36 items-center justify-center overflow-hidden bg-gradient-to-br from-blue-100 via-white to-blue-50">
                   <Image
                     src={official.image}
                     alt={official.name}
-                    fill
-                    className="object-contain object-bottom transition-transform duration-500 group-hover:scale-105"
+                    width={260}
+                    height={180}
+                    className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
                   />
                 </div>
                 
@@ -134,13 +166,37 @@ export default function OfficialsSection() {
               </div>
               
               {/* Card Body */}
-              <CardBody className="bg-white px-4 py-4 text-center">
-                <h3 className="mb-1 line-clamp-2 text-base font-bold text-gray-900">{official.name}</h3>
-                <p className="text-sm font-medium text-blue-600">{official.designation}</p>
+              <CardBody className="bg-white px-4 py-3 text-center">
+                <h3 className="mb-0.5 line-clamp-2 text-sm font-semibold text-gray-900">{official.name}</h3>
+                <p className="text-xs font-medium text-orange-600">{official.designation}</p>
               </CardBody>
             </Card>
           ))}
         </div>
+
+        {/* Modal for full bio */}
+        {selected && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div className="absolute inset-0 bg-black/50" onClick={() => setSelected(null)} />
+            <div className="relative bg-white rounded-xl shadow-xl max-w-md w-full mx-auto p-6 z-10 transform transition-all">
+              <div className="flex items-start gap-4">
+                <div className="w-20 h-20 rounded-full overflow-hidden ring-2 ring-orange-100 flex-shrink-0">
+                  <Image src={selected.image} alt={selected.name} width={80} height={80} className="object-cover" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-gray-900">{selected.name}</h3>
+                  <p className="text-sm text-orange-600">{selected.designation}</p>
+                  <p className="text-xs text-gray-500 mt-1">{selected.department}</p>
+                </div>
+              </div>
+              <p className="mt-4 text-sm text-gray-700">{selected.bio}</p>
+              <div className="mt-4 flex justify-end gap-2">
+                <a href={selected.profileUrl} target="_blank" rel="noreferrer" className="px-4 py-2 text-sm font-medium bg-blue-600 text-white rounded-md">प्रोफाइल पहा</a>
+                <button onClick={() => setSelected(null)} className="px-4 py-2 text-sm font-medium bg-gray-100 rounded-md">Close</button>
+              </div>
+            </div>
+          </div>
+        )}
 
       </div>
     </section>
