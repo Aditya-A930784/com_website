@@ -20,6 +20,10 @@ export default function Footer() {
       { labelKey: 'common.home', href: ROUTES.PUBLIC.HOME },
       { labelKey: 'home.about.tag', href: ROUTES.PUBLIC.ABOUT.BASE },
       { labelKey: 'nav.services', href: ROUTES.PUBLIC.SERVICES.BASE },
+      { label: 'Events', href: ROUTES.PUBLIC.EVENTS },
+      { label: 'Notices', href: ROUTES.PUBLIC.NOTICES },
+      { label: 'Gallery', href: ROUTES.PUBLIC.GALLERY },
+      { label: 'Resources', href: ROUTES.PUBLIC.RESOURCES },
       { labelKey: 'nav.contact', href: ROUTES.PUBLIC.CONTACT },
     ],
     information: [
@@ -134,7 +138,7 @@ export default function Footer() {
               {footerLinks.quickLinks.map((link, index) => (
                 <li key={index}>
                   <Link href={link.href} className="text-slate-400 hover:text-orange-400 transition-colors text-sm py-1 block">
-                    {t(link.labelKey)}
+                    {'labelKey' in link ? t(link.labelKey) : link.label}
                   </Link>
                 </li>
               ))}

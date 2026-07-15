@@ -102,6 +102,19 @@ const navGroups: NavGroup[] = [
     ],
   },
   {
+    labelKey: 'nav.public-info',
+    labelEn: 'Public Info',
+    labelMr: 'सार्वजनिक माहिती',
+    items: [
+      { labelKey: 'public.events', labelEn: 'Events', labelMr: 'कार्यक्रम', href: ROUTES.PUBLIC.EVENTS },
+      { labelKey: 'public.notices', labelEn: 'Notices', labelMr: 'सूचना', href: ROUTES.PUBLIC.NOTICES },
+      { labelKey: 'public.gallery', labelEn: 'Gallery', labelMr: 'छायाचित्र दालन', href: ROUTES.PUBLIC.GALLERY },
+      { labelKey: 'public.membership', labelEn: 'Membership', labelMr: 'सदस्यत्व', href: ROUTES.PUBLIC.MEMBERSHIP },
+      { labelKey: 'public.resources', labelEn: 'Resources', labelMr: 'संसाधने', href: ROUTES.PUBLIC.RESOURCES },
+      { labelKey: 'public.documents', labelEn: 'Documents', labelMr: 'कागदपत्रे', href: ROUTES.PUBLIC.DOCUMENTS },
+    ],
+  },
+  {
     labelKey: 'nav.contact',
     labelEn: 'Contact',
     labelMr: 'संपर्क साधा',
@@ -455,10 +468,10 @@ type NavItemProps = {
 
 function NavItem({ group, locale, active, isOpen, isDropdown, menuId, onOpen, onClose, onToggle }: NavItemProps) {
   const label = locale === 'mr' ? group.labelMr : group.labelEn;
-  const baseClass = `group relative inline-flex items-center gap-1 border-b-2 px-3 py-[10px] text-[13px] font-semibold transition-all duration-200 xl:px-[14px] xl:text-[14px] ${
+  const baseClass = `group relative inline-flex items-center gap-1.5 px-3 py-[10px] text-[13px] font-semibold transition-all duration-150 xl:px-[14px] xl:text-[14px] rounded-sm cursor-pointer select-none ${
     active || isOpen
-      ? 'border-orange-500 bg-orange-600/10 text-white'
-      : 'border-transparent text-slate-100 hover:border-orange-300 hover:bg-white/10 hover:text-white'
+      ? 'bg-orange-500 text-white'
+      : 'text-slate-100 hover:bg-white/15 hover:text-white'
   }`;
 
   if (!isDropdown && group.href) {
@@ -477,7 +490,6 @@ function NavItem({ group, locale, active, isOpen, isDropdown, menuId, onOpen, on
       aria-expanded={isOpen}
       aria-haspopup="menu"
       aria-controls={menuId}
-      onMouseEnter={onOpen}
       onClick={onToggle}
       onKeyDown={(event) => {
         if (event.key === 'Enter' || event.key === ' ') {
@@ -510,7 +522,6 @@ type NavbarProps = {
 
 function Navbar({ locale, pathname, openDesktopMenu, setOpenDesktopMenu }: NavbarProps) {
   const navRef = React.useRef<HTMLDivElement | null>(null);
-  const closeTimer = React.useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const isActiveLink = React.useCallback(
     (href: string) => {
@@ -540,14 +551,6 @@ function Navbar({ locale, pathname, openDesktopMenu, setOpenDesktopMenu }: Navba
     return () => document.removeEventListener('mousedown', handleOutsideClick);
   }, [setOpenDesktopMenu]);
 
-  React.useEffect(() => {
-    return () => {
-      if (closeTimer.current) {
-        clearTimeout(closeTimer.current);
-      }
-    };
-  }, []);
-
   const closeMenu = () => setOpenDesktopMenu(null);
 
   return (
@@ -555,10 +558,7 @@ function Navbar({ locale, pathname, openDesktopMenu, setOpenDesktopMenu }: Navba
       <div className="container-custom">
         <nav
           ref={navRef}
-          className="relative flex items-center gap-3 lg:gap-3 xl:gap-4"
-          onMouseLeave={() => {
-            closeTimer.current = setTimeout(() => setOpenDesktopMenu(null), 120);
-          }}
+          className="relative flex items-center gap-1"
         >
           {primaryNav.map((group) => {
             const isDropdown = Boolean(group.items && group.items.length > 0);
@@ -566,14 +566,7 @@ function Navbar({ locale, pathname, openDesktopMenu, setOpenDesktopMenu }: Navba
             const menuId = `${group.labelKey}-menu`;
 
             return (
-              <div
-                key={group.labelKey}
-                className="relative"
-                onMouseEnter={() => {
-                  if (closeTimer.current) clearTimeout(closeTimer.current);
-                  if (isDropdown) setOpenDesktopMenu(group.labelKey);
-                }}
-              >
+              <div key={group.labelKey} className="relative">
                 <NavItem
                   group={group}
                   locale={locale}
@@ -600,13 +593,7 @@ function Navbar({ locale, pathname, openDesktopMenu, setOpenDesktopMenu }: Navba
             );
           })}
 
-          <div
-            className="relative"
-            onMouseEnter={() => {
-              if (closeTimer.current) clearTimeout(closeTimer.current);
-              setOpenDesktopMenu('more');
-            }}
-          >
+          <div className="relative">
             <NavItem
               group={{ labelKey: 'nav.more', labelEn: 'More', labelMr: 'अधिक' }}
               locale={locale}

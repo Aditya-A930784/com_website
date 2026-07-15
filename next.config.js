@@ -7,6 +7,7 @@ const nextConfig = {
       'chhsambhajinagarmc.org',
       'firebasestorage.googleapis.com',
       'lh3.googleusercontent.com',
+      'images.unsplash.com',
     ],
     remotePatterns: [
       {

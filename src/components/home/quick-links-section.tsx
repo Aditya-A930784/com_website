@@ -1,15 +1,55 @@
+import Link from 'next/link';
+
 import {
   Building2,
+  CalendarDays,
   ExternalLink,
   Factory,
   Globe,
   HandCoins,
+  Images,
   Landmark,
   ListChecks,
+  Megaphone,
   Play,
   Smartphone,
   Users,
 } from 'lucide-react';
+
+import { ROUTES } from '@/lib/constants/routes';
+
+const citizenLinks = [
+  {
+    name: 'Events',
+    description: 'Public camps, city programmes, and civic participation events.',
+    href: ROUTES.PUBLIC.EVENTS,
+    Icon: CalendarDays,
+  },
+  {
+    name: 'Notices',
+    description: 'Official public notices, urgent alerts, and department circulars.',
+    href: ROUTES.PUBLIC.NOTICES,
+    Icon: Megaphone,
+  },
+  {
+    name: 'Gallery',
+    description: 'City landmarks, heritage places, and municipal photo updates.',
+    href: ROUTES.PUBLIC.GALLERY,
+    Icon: Images,
+  },
+  {
+    name: 'Membership',
+    description: 'Citizen volunteer, RWA, and civic partner participation options.',
+    href: ROUTES.PUBLIC.MEMBERSHIP,
+    Icon: Users,
+  },
+  {
+    name: 'Resources',
+    description: 'Quick directory for services, documents, FAQs, and support.',
+    href: ROUTES.PUBLIC.RESOURCES,
+    Icon: ListChecks,
+  },
+];
 
 const governmentLinks = [
   { name: 'Digital India', url: 'https://dic.gov.in/', Icon: Globe },
@@ -27,6 +67,38 @@ export default function QuickLinksSection() {
   return (
     <section className="py-12 bg-gradient-to-b from-white to-gray-50">
       <div className="container-custom">
+        <div className="mb-14">
+          <div className="mb-8 text-center">
+            <p className="text-sm font-semibold uppercase tracking-[0.22em] text-orange-700">
+              Citizen Access
+            </p>
+            <h3 className="mt-2 text-2xl font-bold text-gray-900">
+              Public information at one click
+            </h3>
+            <p className="mx-auto mt-2 max-w-2xl text-sm text-gray-600">
+              Important pages for citizens are available directly from the homepage.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
+            {citizenLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="group rounded-lg border border-gray-200 bg-white p-4 shadow-sm transition hover:-translate-y-1 hover:border-orange-300 hover:shadow-md"
+              >
+                <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-lg bg-orange-50 text-orange-700 transition group-hover:bg-orange-100">
+                  <link.Icon size={21} aria-hidden />
+                </div>
+                <h4 className="text-base font-bold text-gray-900 transition group-hover:text-orange-700">
+                  {link.name}
+                </h4>
+                <p className="mt-2 text-sm leading-relaxed text-gray-600">{link.description}</p>
+              </Link>
+            ))}
+          </div>
+        </div>
+
         <h3 className="text-center text-xl font-bold text-gray-900 mb-8">
           महत्वाचे शासकीय पोर्टल
         </h3>

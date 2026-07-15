@@ -1,196 +1,255 @@
 'use client';
 
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import {
-  ArrowRight,
-  Bus,
-  Calendar,
-  Droplets,
-  Eye,
-  HardHat,
-  MonitorSmartphone,
-  Route,
-  Trees,
-  Trash2,
-  Users,
-} from 'lucide-react';
+import Image from 'next/image';
+import { ArrowRight, Calendar, Eye, TrendingUp, Newspaper, BookOpen, Users } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
+import { useTranslation } from '@/lib/i18n/LanguageContext';
 
-const newsItems = [
-  {
-    id: 1,
-    title: 'छत्रपती संभाजीनगर स्मार्ट सिटी प्रकल्पात नवीन विकास',
-    date: '20 जून 2026',
-    category: 'स्मार्ट सिटी',
-    views: 3250,
-    Icon: HardHat,
-    description: 'स्मार्ट सिटी प्रकल्पांतर्गत नवीन CCTV कॅमेरे आणि स्मार्ट स्ट्रीट लाइट्स बसवण्यात येणार',
-  },
-  {
-    id: 2,
-    title: 'महानगरपालिकेच्या ऑनलाइन सेवा सुरू',
-    date: '18 जून 2026',
-    category: 'डिजिटल',
-    views: 4300,
-    Icon: MonitorSmartphone,
-    description: 'नागरिक आता घरबसल्या मालमत्ता कर, पाणीपट्टी आणि इतर सेवांसाठी ऑनलाइन अर्ज करू शकतात',
-  },
-  {
-    id: 3,
-    title: 'स्वच्छता अभियान अंतर्गत ५००० टन कचरा प्रक्रिया',
-    date: '15 जून 2026',
-    category: 'स्वच्छता',
-    views: 2850,
-    Icon: Trash2,
-    description: 'शहरातील सर्व प्रभागांमध्ये स्वच्छता मोहीम राबवून कचरा व्यवस्थापनात सुधारणा',
-  },
-  {
-    id: 4,
-    title: 'सिडको येथे नवीन मनोरंजन पार्क उद्घाटन',
-    date: '12 जून 2026',
-    category: 'सुविधा',
-    views: 1980,
-    Icon: Trees,
-    description: 'नागरिकांसाठी १० एकर क्षेत्रावर आधुनिक सुविधांसह मनोरंजन पार्क तयार',
-  },
-  {
-    id: 5,
-    title: 'शहरातील ५० किमी रस्ते डांबरीकरण पूर्ण',
-    date: '10 जून 2026',
-    category: 'पायाभूत',
-    views: 2560,
-    Icon: Route,
-    description: 'प्रमुख रस्त्यांचे डांबरीकरण पूर्ण, नागरिकांना सुखावह प्रवास',
-  },
-  {
-    id: 6,
-    title: '२४×७ पाणीपुरवठा योजना सुरू',
-    date: '8 जून 2026',
-    category: 'पाणी',
-    views: 3100,
-    Icon: Droplets,
-    description: 'शहरातील सर्व भागात २४ तास पाणी पुरवठा सुरू करण्यात येणार',
-  },
-  {
-    id: 7,
-    title: 'महापौरांनी केली नागरिकांशी संवाद सभा',
-    date: '5 जून 2026',
-    category: 'प्रशासन',
-    views: 1750,
-    Icon: Users,
-    description: 'नागरिकांच्या समस्या ऐकून त्वरित निराकरणाचे आश्वासन',
-  },
-  {
-    id: 8,
-    title: 'शहरात नवीन ५० इलेक्ट्रिक बस सेवा',
-    date: '1 जून 2026',
-    category: 'परिवहन',
-    views: 2890,
-    Icon: Bus,
-    description: 'पर्यावरणपूरक वाहतूक व्यवस्था सुरू, नागरिकांना सवलत दरात प्रवास',
-  },
+// Real Unsplash photos for each news item
+const newsPhotos = [
+  'https://images.unsplash.com/photo-1573804633927-bfcbcd909acd?w=800&q=80', // smart city
+  'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&q=80',    // digital services
+  'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80',    // cleanliness
+  'https://images.unsplash.com/photo-1519331379826-f10be5486c6f?w=800&q=80', // park
+  'https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?w=800&q=80', // road
+  'https://images.unsplash.com/photo-1548438294-1ad5d5f4f063?w=800&q=80',    // water
+  'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=800&q=80', // public meeting
+  'https://images.unsplash.com/photo-1570125909232-eb263c188f7e?w=800&q=80', // electric bus
+];
+
+const categoryColors = [
+  'bg-blue-500',
+  'bg-purple-500',
+  'bg-green-500',
+  'bg-emerald-500',
+  'bg-orange-500',
+  'bg-cyan-600',
+  'bg-rose-500',
+  'bg-indigo-500',
+];
+
+const textColors = [
+  'text-blue-600',
+  'text-purple-600',
+  'text-green-600',
+  'text-emerald-600',
+  'text-orange-600',
+  'text-cyan-600',
+  'text-rose-600',
+  'text-indigo-600',
 ];
 
 export default function NewsSection() {
   const [showAll, setShowAll] = useState(false);
+  const { t } = useTranslation();
+
+  const newsItems = [
+    { id: 1, views: 3250 },
+    { id: 2, views: 4300 },
+    { id: 3, views: 2850 },
+    { id: 4, views: 1980 },
+    { id: 5, views: 2560 },
+    { id: 6, views: 3100 },
+    { id: 7, views: 1750 },
+    { id: 8, views: 2890 },
+  ];
+
   const displayedNews = showAll ? newsItems : newsItems.slice(0, 6);
+  const featured = newsItems[0];
 
   return (
-    <section className="py-16 lg:py-24 bg-white">
+    <section className="py-16 lg:py-24 bg-gray-50">
       <div className="container-custom">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <span className="inline-block bg-green-100 text-green-600 px-4 py-2 rounded-full text-sm font-medium mb-4">
-            ताज्या बातम्या
-          </span>
-          <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-            बातम्या आणि अद्यावत घडामोडी
-          </h2>
-          <p className="text-gray-600 max-w-2xl mx-auto">
-            महानगरपालिकेच्या सर्व महत्वाच्या घडामोडी आणि अपडेट्स
-          </p>
+
+        {/* ── Header ─────────────────────────────────────────────── */}
+        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-12">
+          <div>
+            <span className="inline-flex items-center gap-2 bg-blue-600 text-white px-4 py-1.5 rounded-full text-sm font-semibold mb-3">
+              <Newspaper size={14} />
+              {t('home.news.tag')}
+            </span>
+            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-2">
+              {t('home.news.title')}
+            </h2>
+            <p className="text-gray-500 max-w-xl">{t('home.news.description')}</p>
+          </div>
+          <Link
+            href="/news"
+            className="shrink-0 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border-2 border-blue-600 text-blue-600 font-semibold hover:bg-blue-600 hover:text-white transition-all duration-200"
+          >
+            {t('home.news.view_all')}
+            <ArrowRight size={16} />
+          </Link>
         </div>
 
-        {/* News Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          {displayedNews.map((news) => (
-            <Link key={news.id} href={`/news/${news.id}`} className="group">
-              <Card hover className="overflow-hidden h-full">
-                {/* Image */}
-                <div className="aspect-video bg-gradient-to-br from-blue-100 to-indigo-100 relative overflow-hidden">
-                  <div className="absolute inset-0 flex items-center justify-center text-blue-700 group-hover:scale-110 transition-transform duration-300">
-                    <news.Icon size={68} strokeWidth={1.5} />
+        {/* ── Featured + Side 2-cards ─────────────────────────────── */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+
+          {/* Featured — large hero card */}
+          <Link href="/news/1" className="group lg:col-span-2">
+            <div className="relative rounded-2xl overflow-hidden h-full min-h-[340px] shadow-lg">
+              <Image
+                src={newsPhotos[0]}
+                alt={t('home.news.item1_title')}
+                fill
+                className="object-cover group-hover:scale-105 transition-transform duration-500"
+                sizes="(max-width: 1024px) 100vw, 66vw"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
+              <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
+                <span className="inline-block bg-blue-500/90 backdrop-blur-sm text-white text-xs font-semibold px-3 py-1 rounded-full mb-3">
+                  {t('home.news.item1_category')}
+                </span>
+                <h3 className="text-xl lg:text-2xl font-bold mb-2 group-hover:text-blue-200 transition-colors line-clamp-2">
+                  {t('home.news.item1_title')}
+                </h3>
+                <p className="text-white/80 text-sm line-clamp-2 mb-4">
+                  {t('home.news.item1_desc')}
+                </p>
+                <div className="flex items-center justify-between text-white/70 text-sm">
+                  <span className="flex items-center gap-1.5">
+                    <Calendar size={14} />
+                    {t('home.news.item1_date')}
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <Eye size={14} />
+                    {featured.views.toLocaleString()}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </Link>
+
+          {/* Side cards — items 2 & 3 */}
+          <div className="flex flex-col gap-6">
+            {[2, 3].map((num) => {
+              const item = newsItems[num - 1];
+              return (
+                <Link key={num} href={`/news/${num}`} className="group flex-1">
+                  <div className="relative rounded-2xl overflow-hidden h-full min-h-[155px] shadow-md">
+                    <Image
+                      src={newsPhotos[num - 1]}
+                      alt={t(`home.news.item${num}_title`)}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-500"
+                      sizes="(max-width: 1024px) 100vw, 33vw"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                    <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
+                      <span className={`inline-block ${categoryColors[num - 1]} text-white text-xs font-semibold px-2 py-0.5 rounded-full mb-2`}>
+                        {t(`home.news.item${num}_category`)}
+                      </span>
+                      <h3 className="text-sm font-bold group-hover:text-blue-200 transition-colors line-clamp-2 mb-2">
+                        {t(`home.news.item${num}_title`)}
+                      </h3>
+                      <div className="flex items-center gap-3 text-white/70 text-xs">
+                        <span className="flex items-center gap-1">
+                          <Calendar size={11} />
+                          {t(`home.news.item${num}_date`)}
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <Eye size={11} />
+                          {item.views.toLocaleString()}
+                        </span>
+                      </div>
+                    </div>
                   </div>
-                  {/* Category Badge */}
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* ── Regular grid — items 4–8 ────────────────────────────── */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+          {displayedNews.slice(3).map((item) => (
+            <Link key={item.id} href={`/news/${item.id}`} className="group">
+              <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 h-full flex flex-col">
+
+                {/* Real photo */}
+                <div className="relative h-48 overflow-hidden">
+                  <Image
+                    src={newsPhotos[item.id - 1]}
+                    alt={t(`home.news.item${item.id}_title`)}
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
                   <div className="absolute top-3 left-3">
-                    <span className="bg-white/90 backdrop-blur-sm text-gray-900 text-xs font-semibold px-3 py-1 rounded-full">
-                      {news.category}
+                    <span className={`${categoryColors[item.id - 1]} text-white text-xs font-semibold px-3 py-1 rounded-full`}>
+                      {t(`home.news.item${item.id}_category`)}
                     </span>
                   </div>
                 </div>
 
-                {/* Content */}
-                <div className="p-5">
-                  <h3 className="font-bold text-lg text-gray-900 mb-3 group-hover:text-orange-600 transition-colors line-clamp-2">
-                    {news.title}
+                {/* Text content */}
+                <div className="p-5 flex flex-col flex-1">
+                  <h3 className="font-bold text-base text-gray-900 mb-2 group-hover:text-blue-600 transition-colors line-clamp-2 flex-1">
+                    {t(`home.news.item${item.id}_title`)}
                   </h3>
-                  
-                  <div className="flex items-center justify-between text-sm text-gray-600">
-                    <div className="flex items-center gap-1">
-                      <Calendar size={14} />
-                      <span>{news.date}</span>
+                  <p className="text-gray-500 text-sm line-clamp-2 mb-4">
+                    {t(`home.news.item${item.id}_desc`)}
+                  </p>
+                  <div className="flex items-center justify-between text-xs text-gray-500 pt-3 border-t border-gray-100">
+                    <span className="flex items-center gap-1.5">
+                      <Calendar size={13} className="text-gray-400" />
+                      {t(`home.news.item${item.id}_date`)}
+                    </span>
+                    <div className="flex items-center gap-3">
+                      <span className="flex items-center gap-1">
+                        <Eye size={13} className="text-gray-400" />
+                        {item.views.toLocaleString()}
+                      </span>
+                      <span className="hidden group-hover:flex items-center gap-1 font-semibold text-blue-600">
+                        {t('home.news.read_more')}
+                        <ArrowRight size={13} className="group-hover:translate-x-1 transition-transform" />
+                      </span>
                     </div>
-                    <div className="flex items-center gap-1">
-                      <Eye size={14} />
-                      <span>{news.views}</span>
-                    </div>
-                  </div>
-
-                  {/* Read More Link */}
-                  <div className="mt-4 flex items-center text-orange-600 font-medium text-sm opacity-0 group-hover:opacity-100 transition-opacity">
-                    <span>अधिक वाचा</span>
-                    <ArrowRight size={16} className="ml-1 group-hover:translate-x-1 transition-transform" />
                   </div>
                 </div>
-              </Card>
+              </div>
             </Link>
           ))}
         </div>
 
-        {/* View All Button */}
-        <div className="text-center">
-          <Button 
-            size="lg"
-            variant="outline"
+        {/* ── Show More / Less ────────────────────────────────────── */}
+        <div className="text-center mb-16">
+          <button
             onClick={() => setShowAll(!showAll)}
-            className="group"
+            className="inline-flex items-center gap-2 px-8 py-3 rounded-full border-2 border-blue-600 text-blue-600 font-semibold hover:bg-blue-600 hover:text-white transition-all duration-300 group"
           >
-            {showAll ? 'कमी बातम्या दाखवा' : 'सर्व बातम्या पहा'}
-            <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" size={18} />
-          </Button>
+            {showAll ? t('home.news.view_less') : t('home.news.view_all')}
+            <ArrowRight
+              size={18}
+              className={`transition-transform duration-300 ${showAll ? 'rotate-90' : 'group-hover:translate-x-1'}`}
+            />
+          </button>
         </div>
 
-        {/* Quick Stats */}
-        <div className="mt-16 grid grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="text-center">
-            <div className="text-4xl font-bold text-orange-600 mb-2">500+</div>
-            <div className="text-gray-600">प्रकाशित बातम्या</div>
-          </div>
-          <div className="text-center">
-            <div className="text-4xl font-bold text-blue-600 mb-2">50K+</div>
-            <div className="text-gray-600">वाचक</div>
-          </div>
-          <div className="text-center">
-            <div className="text-4xl font-bold text-green-600 mb-2">24/7</div>
-            <div className="text-gray-600">अपडेट्स</div>
-          </div>
-          <div className="text-center">
-            <div className="text-4xl font-bold text-purple-600 mb-2">10+</div>
-            <div className="text-gray-600">विभाग</div>
+        {/* ── Stats Bar ───────────────────────────────────────────── */}
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+            {[
+              { value: '500+', label: t('home.news.stats_published'), icon: Newspaper, color: 'text-blue-600',   bg: 'bg-blue-50' },
+              { value: '50K+', label: t('home.news.stats_readers'),   icon: Users,     color: 'text-purple-600', bg: 'bg-purple-50' },
+              { value: '24/7', label: t('home.news.stats_updates'),   icon: TrendingUp, color: 'text-green-600', bg: 'bg-green-50' },
+              { value: '10+',  label: t('home.news.stats_departments'),icon: BookOpen,  color: 'text-orange-600', bg: 'bg-orange-50' },
+            ].map((stat, i) => (
+              <div key={i} className="flex items-center gap-4">
+                <div className={`w-12 h-12 rounded-xl ${stat.bg} flex items-center justify-center shrink-0`}>
+                  <stat.icon size={22} className={stat.color} />
+                </div>
+                <div>
+                  <div className={`text-2xl font-bold ${stat.color}`}>{stat.value}</div>
+                  <div className="text-gray-500 text-sm">{stat.label}</div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
+
       </div>
     </section>
   );
