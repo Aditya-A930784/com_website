@@ -19,7 +19,7 @@ export default function OfficialsSection() {
       aria-labelledby="officials-heading"
     >
       <div
-        className="absolute inset-x-0 top-0 h-48 bg-gradient-to-b from-orange-50 to-transparent"
+        className="absolute inset-x-0 top-0 h-48 bg-gradient-to-b from-slate-100 to-transparent"
         aria-hidden
       />
       <div className="container-custom relative">
@@ -122,11 +122,11 @@ function OfficialCard({ official, onOpen }: { official: Official; onOpen: () => 
       role="listitem"
     >
       <div
-        className="absolute inset-x-0 top-0 h-20 bg-gradient-to-r from-orange-600 via-amber-500 to-sky-600 sm:h-24"
+        className="absolute inset-x-0 top-0 h-20 bg-slate-800 sm:h-24"
         aria-hidden
       />
       <motion.div
-        className="absolute right-4 top-4 h-10 w-10 rounded-full border border-white/35 bg-white/20 backdrop-blur sm:right-5 sm:top-5 sm:h-12 sm:w-12"
+        className="absolute right-4 top-4 h-10 w-10 rounded-full border border-white/20 bg-white/10 backdrop-blur sm:right-5 sm:top-5 sm:h-12 sm:w-12"
         animate={{ rotate: [0, 8, 0], scale: [1, 1.05, 1] }}
         transition={{ duration: 4.8, repeat: Infinity, ease: 'easeInOut' }}
         aria-hidden
@@ -216,7 +216,7 @@ function OfficialProfileModal({ official, onClose }: { official: Official; onClo
         aria-modal="true"
         aria-labelledby="official-profile-title"
       >
-        <div className="relative bg-gradient-to-r from-orange-600 via-amber-500 to-sky-600 px-5 py-5 text-white sm:px-6 sm:py-6">
+        <div className="relative bg-slate-800 px-5 py-5 text-white sm:px-6 sm:py-6">
           <button
             type="button"
             onClick={onClose}
