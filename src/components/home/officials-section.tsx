@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import Image from 'next/image';
 import Link from 'next/link';
@@ -6,130 +6,38 @@ import { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowUpRight, Building2, ExternalLink, Mail, Phone, ShieldCheck, X } from 'lucide-react';
 
+import { officialGroups, officials, type Official } from '@/lib/constants/officials';
 import { useTranslation } from '@/lib/i18n/LanguageContext';
-
-type Official = {
-  name: string;
-  designation: string;
-  department: string;
-  group: 'State Leadership' | 'Civic Leadership' | 'Administration';
-  image: string;
-  profileUrl: string;
-  email: string;
-  phone: string;
-  bio: string;
-  focus: string[];
-};
-
-const officials: Official[] = [
-  {
-    name: 'Shri Devendra Fadnavis',
-    designation: 'Hon. Chief Minister',
-    department: 'Government of Maharashtra',
-    group: 'State Leadership',
-    image: 'https://chhsambhajinagarmc.org/assets/cdma/testimonials/DevendraFadnavis17.png',
-    profileUrl: 'https://www.maharashtra.gov.in/',
-    email: 'cm@maharashtra.gov.in',
-    phone: '022-22025222',
-    bio: 'Provides state-level direction for urban development, public infrastructure, and citizen-focused governance.',
-    focus: ['Urban policy', 'Infrastructure', 'Public services'],
-  },
-  {
-    name: 'Shri Eknath Shinde',
-    designation: 'Hon. Deputy Chief Minister',
-    department: 'Government of Maharashtra',
-    group: 'State Leadership',
-    image: 'https://chhsambhajinagarmc.org/assets/cdma/testimonials/Eknath_Shinde6.png',
-    profileUrl: 'https://www.maharashtra.gov.in/',
-    email: 'dcm@maharashtra.gov.in',
-    phone: '022-22025151',
-    bio: 'Supports major civic development decisions and coordinates state priorities for municipal transformation.',
-    focus: ['Civic works', 'Coordination', 'Development'],
-  },
-  {
-    name: 'Smt. Sunetra Ajit Pawar',
-    designation: 'Hon. Deputy Chief Minister',
-    department: 'Government of Maharashtra',
-    group: 'State Leadership',
-    image: 'https://chhsambhajinagarmc.org/assets/cdma/testimonials/vahini-saheb5.png',
-    profileUrl: 'https://www.maharashtra.gov.in/',
-    email: 'office@maharashtra.gov.in',
-    phone: '022-22025353',
-    bio: 'Guides development priorities connected to welfare, financial planning, and inclusive public delivery.',
-    focus: ['Welfare', 'Finance', 'Governance'],
-  },
-  {
-    name: 'Smt. Madhuri Misal',
-    designation: 'Hon. Minister of State',
-    department: 'Urban Development Department',
-    group: 'State Leadership',
-    image: 'https://chhsambhajinagarmc.org/assets/cdma/testimonials/madhuri_misal21.png',
-    profileUrl: 'https://www.maharashtra.gov.in/',
-    email: 'udd@maharashtra.gov.in',
-    phone: '022-22026666',
-    bio: 'Works with the Urban Development Department on city planning, implementation, and service improvement.',
-    focus: ['Urban development', 'Planning', 'Implementation'],
-  },
-  {
-    name: 'Shri Sameer Rajurkar',
-    designation: 'Hon. Mayor',
-    department: 'CSMC',
-    group: 'Civic Leadership',
-    image: 'https://chhsambhajinagarmc.org/assets/cdma/testimonials/samir-bhaiya-rajurkar4.png',
-    profileUrl: 'https://chhsambhajinagarmc.org/institutional-structure',
-    email: 'mayor@chhsambhajinagarmc.org',
-    phone: '0240-2333536',
-    bio: 'Represents the city council and leads public priorities across wards, local works, and civic initiatives.',
-    focus: ['Ward priorities', 'Public works', 'Citizen outreach'],
-  },
-  {
-    name: 'Shri Rajendra Janjal',
-    designation: 'Hon. Deputy Mayor',
-    department: 'CSMC',
-    group: 'Civic Leadership',
-    image: 'https://chhsambhajinagarmc.org/assets/cdma/testimonials/raju-bhaiya-janjal5.png',
-    profileUrl: 'https://chhsambhajinagarmc.org/institutional-structure',
-    email: 'deputymayor@chhsambhajinagarmc.org',
-    phone: '0240-2333536',
-    bio: 'Assists civic leadership with city-level coordination, committee work, and ward-level public engagement.',
-    focus: ['Council support', 'Ward coordination', 'Committees'],
-  },
-  {
-    name: 'Shri Amol Yedge, IAS',
-    designation: 'Municipal Commissioner',
-    department: 'CSMC',
-    group: 'Administration',
-    image: 'https://chhsambhajinagarmc.org/assets/cdma/testimonials/amol_sir_gem5.png',
-    profileUrl: 'https://chhsambhajinagarmc.org/institutional-structure',
-    email: 'commissioner@chhsambhajinagarmc.org',
-    phone: '0240-2333536',
-    bio: 'Heads municipal administration and supervises service delivery, digital systems, and department operations.',
-    focus: ['Administration', 'Digital services', 'Operations'],
-  },
-];
-
-const groups = ['State Leadership', 'Civic Leadership', 'Administration'] as const;
 
 export default function OfficialsSection() {
   const { t } = useTranslation();
   const [selectedOfficial, setSelectedOfficial] = useState<Official | null>(null);
 
   return (
-    <section className="relative overflow-hidden bg-slate-50 py-16 lg:py-24" aria-labelledby="officials-heading">
-      <div className="absolute inset-x-0 top-0 h-48 bg-gradient-to-b from-orange-50 to-transparent" aria-hidden />
+    <section
+      className="relative overflow-hidden bg-slate-50 py-12 sm:py-16 lg:py-24"
+      aria-labelledby="officials-heading"
+    >
+      <div
+        className="absolute inset-x-0 top-0 h-48 bg-gradient-to-b from-orange-50 to-transparent"
+        aria-hidden
+      />
       <div className="container-custom relative">
         <motion.div
-          className="mx-auto mb-12 max-w-3xl text-center"
+          className="mx-auto mb-10 max-w-3xl text-center sm:mb-12"
           initial={{ opacity: 0, y: 18 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.35 }}
           transition={{ duration: 0.55, ease: 'easeOut' }}
         >
-          <span className="inline-flex items-center gap-2 rounded-lg bg-orange-100 px-4 py-2 text-sm font-semibold text-orange-800">
+          <span className="inline-flex items-center gap-2 rounded-lg bg-orange-100 px-3.5 py-2 text-xs font-semibold text-orange-800 sm:px-4 sm:text-sm">
             <ShieldCheck size={16} aria-hidden />
             {t('home.officials.tag')}
           </span>
-          <h2 id="officials-heading" className="mt-4 text-3xl font-bold text-slate-950 lg:text-4xl">
+          <h2
+            id="officials-heading"
+            className="mt-4 text-2xl font-bold text-slate-950 sm:text-3xl lg:text-4xl"
+          >
             {t('home.officials.title')}
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-slate-600 md:text-base">
@@ -137,8 +45,8 @@ export default function OfficialsSection() {
           </p>
         </motion.div>
 
-        <div className="space-y-10">
-          {groups.map((group, groupIndex) => {
+        <div className="space-y-9 lg:space-y-12">
+          {officialGroups.map((group, groupIndex) => {
             const groupedOfficials = officials.filter((official) => official.group === group);
 
             return (
@@ -149,20 +57,24 @@ export default function OfficialsSection() {
                 viewport={{ once: true, amount: 0.18 }}
                 transition={{ duration: 0.55, delay: groupIndex * 0.08, ease: 'easeOut' }}
               >
-                <div className="mb-4 flex items-center gap-3">
-                  <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-white text-orange-700 shadow-sm ring-1 ring-slate-200">
-                    <Building2 size={20} aria-hidden />
-                  </span>
-                  <div>
-                    <h3 className="text-lg font-bold text-slate-950">{group}</h3>
-                    <p className="text-xs font-medium uppercase tracking-[0.18em] text-slate-500">
-                      {groupedOfficials.length} profiles
-                    </p>
+                <div className="mb-4 flex items-center justify-between gap-4">
+                  <div className="flex min-w-0 items-center gap-3">
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-white text-orange-700 shadow-sm ring-1 ring-slate-200">
+                      <Building2 size={20} aria-hidden />
+                    </span>
+                    <div className="min-w-0">
+                      <h3 className="truncate text-base font-bold text-slate-950 sm:text-lg">
+                        {group}
+                      </h3>
+                      <p className="text-xs font-medium uppercase tracking-[0.16em] text-slate-500">
+                        {groupedOfficials.length} profiles
+                      </p>
+                    </div>
                   </div>
                 </div>
 
                 <motion.div
-                  className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3"
+                  className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 xl:grid-cols-3"
                   variants={{
                     visible: { transition: { staggerChildren: 0.08 } },
                   }}
@@ -187,7 +99,10 @@ export default function OfficialsSection() {
 
       <AnimatePresence>
         {selectedOfficial && (
-          <OfficialProfileModal official={selectedOfficial} onClose={() => setSelectedOfficial(null)} />
+          <OfficialProfileModal
+            official={selectedOfficial}
+            onClose={() => setSelectedOfficial(null)}
+          />
         )}
       </AnimatePresence>
     </section>
@@ -197,7 +112,7 @@ export default function OfficialsSection() {
 function OfficialCard({ official, onOpen }: { official: Official; onOpen: () => void }) {
   return (
     <motion.article
-      className="group relative min-h-[388px] overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm"
+      className="group relative flex min-h-[360px] overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm sm:min-h-[410px]"
       variants={{
         hidden: { opacity: 0, y: 24, scale: 0.98 },
         visible: { opacity: 1, y: 0, scale: 1 },
@@ -206,16 +121,19 @@ function OfficialCard({ official, onOpen }: { official: Official; onOpen: () => 
       whileHover={{ y: -8 }}
       role="listitem"
     >
-      <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-r from-orange-600 via-amber-500 to-sky-600" aria-hidden />
+      <div
+        className="absolute inset-x-0 top-0 h-20 bg-gradient-to-r from-orange-600 via-amber-500 to-sky-600 sm:h-24"
+        aria-hidden
+      />
       <motion.div
-        className="absolute right-5 top-5 h-12 w-12 rounded-full border border-white/35 bg-white/20 backdrop-blur"
+        className="absolute right-4 top-4 h-10 w-10 rounded-full border border-white/35 bg-white/20 backdrop-blur sm:right-5 sm:top-5 sm:h-12 sm:w-12"
         animate={{ rotate: [0, 8, 0], scale: [1, 1.05, 1] }}
         transition={{ duration: 4.8, repeat: Infinity, ease: 'easeInOut' }}
         aria-hidden
       />
 
-      <div className="relative flex h-full flex-col px-5 pb-5 pt-10">
-        <div className="mx-auto h-28 w-28 overflow-hidden rounded-full border-4 border-white bg-white shadow-lg ring-1 ring-slate-200">
+      <div className="relative flex w-full flex-col px-4 pb-4 pt-8 sm:px-5 sm:pb-5 sm:pt-10">
+        <div className="mx-auto h-24 w-24 overflow-hidden rounded-full border-4 border-white bg-white shadow-lg ring-1 ring-slate-200 sm:h-28 sm:w-28">
           <Image
             src={official.image}
             alt={official.name}
@@ -226,45 +144,48 @@ function OfficialCard({ official, onOpen }: { official: Official; onOpen: () => 
           />
         </div>
 
-        <div className="mt-5 text-center">
-          <h4 className="text-xl font-bold leading-tight text-slate-950">{official.name}</h4>
+        <div className="mt-4 text-center sm:mt-5">
+          <h4 className="text-lg font-bold leading-tight text-slate-950 sm:text-xl">
+            {official.name}
+          </h4>
           <p className="mt-2 text-sm font-semibold text-orange-700">{official.designation}</p>
-          <p className="mt-1 text-xs font-medium uppercase tracking-[0.16em] text-slate-500">{official.department}</p>
+          <p className="mx-auto mt-1 max-w-[18rem] text-xs font-medium uppercase tracking-[0.12em] text-slate-500 sm:tracking-[0.16em]">
+            {official.department}
+          </p>
         </div>
 
-        <p className="mt-4 line-clamp-3 text-center text-sm leading-relaxed text-slate-600">{official.bio}</p>
+        <p className="mt-3 line-clamp-3 text-center text-sm leading-relaxed text-slate-600 sm:mt-4">
+          {official.bio}
+        </p>
 
-        <div className="mt-5 flex flex-wrap justify-center gap-2">
+        <div className="mt-4 flex flex-wrap justify-center gap-2 sm:mt-5">
           {official.focus.slice(0, 2).map((item) => (
-            <span key={item} className="rounded-md bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-700">
+            <span
+              key={item}
+              className="rounded-md bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-700"
+            >
               {item}
             </span>
           ))}
         </div>
 
-        <div className="mt-auto flex items-center justify-center gap-2 pt-5">
+        <div className="mt-auto grid grid-cols-[1fr_1fr] items-center gap-2 pt-5">
           <Link
             href={`mailto:${official.email}`}
-            className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 text-slate-600 transition hover:border-orange-300 hover:bg-orange-50 hover:text-orange-700"
+            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-orange-200 bg-orange-50 px-3 py-2 text-sm font-semibold text-orange-800 transition hover:border-orange-300 hover:bg-orange-100"
             aria-label={`Email ${official.name}`}
           >
             <Mail size={17} aria-hidden />
-          </Link>
-          <Link
-            href={`tel:${official.phone}`}
-            className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 text-slate-600 transition hover:border-sky-300 hover:bg-sky-50 hover:text-sky-700"
-            aria-label={`Call ${official.name}`}
-          >
-            <Phone size={17} aria-hidden />
+            <span>Contact Office</span>
           </Link>
           <motion.button
             type="button"
             onClick={onOpen}
-            className="inline-flex min-h-10 items-center gap-2 rounded-lg bg-slate-950 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-orange-700"
+            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-slate-950 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-orange-700"
             whileTap={{ scale: 0.96 }}
             aria-label={`View profile for ${official.name}`}
           >
-            Profile
+            View Profile
             <ArrowUpRight size={16} aria-hidden />
           </motion.button>
         </div>
@@ -276,7 +197,7 @@ function OfficialCard({ official, onOpen }: { official: Official; onOpen: () => 
 function OfficialProfileModal({ official, onClose }: { official: Official; onClose: () => void }) {
   return (
     <motion.div
-      className="fixed inset-0 z-50 flex items-end justify-center bg-slate-950/70 p-4 backdrop-blur-sm sm:items-center"
+      className="fixed inset-0 z-50 flex items-end justify-center bg-slate-950/70 p-0 backdrop-blur-sm sm:items-center sm:p-4"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -286,7 +207,7 @@ function OfficialProfileModal({ official, onClose }: { official: Official; onClo
       role="presentation"
     >
       <motion.div
-        className="w-full max-w-2xl overflow-hidden rounded-lg bg-white shadow-2xl"
+        className="max-h-[92vh] w-full max-w-2xl overflow-hidden rounded-t-lg bg-white shadow-2xl sm:rounded-lg"
         initial={{ opacity: 0, y: 34, scale: 0.96 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         exit={{ opacity: 0, y: 24, scale: 0.96 }}
@@ -295,7 +216,7 @@ function OfficialProfileModal({ official, onClose }: { official: Official; onClo
         aria-modal="true"
         aria-labelledby="official-profile-title"
       >
-        <div className="relative bg-gradient-to-r from-orange-600 via-amber-500 to-sky-600 px-5 py-6 text-white sm:px-6">
+        <div className="relative bg-gradient-to-r from-orange-600 via-amber-500 to-sky-600 px-5 py-5 text-white sm:px-6 sm:py-6">
           <button
             type="button"
             onClick={onClose}
@@ -305,13 +226,24 @@ function OfficialProfileModal({ official, onClose }: { official: Official; onClo
             <X size={20} aria-hidden />
           </button>
 
-          <div className="flex flex-col gap-4 pr-12 sm:flex-row sm:items-center">
-            <div className="h-24 w-24 shrink-0 overflow-hidden rounded-full border-4 border-white bg-white shadow-lg">
-              <Image src={official.image} alt={official.name} width={96} height={96} className="h-full w-full object-cover" />
+          <div className="flex items-center gap-4 pr-12">
+            <div className="h-20 w-20 shrink-0 overflow-hidden rounded-full border-4 border-white bg-white shadow-lg sm:h-24 sm:w-24">
+              <Image
+                src={official.image}
+                alt={official.name}
+                width={96}
+                height={96}
+                className="h-full w-full object-cover"
+              />
             </div>
-            <div>
-              <p className="text-sm font-semibold uppercase tracking-[0.18em] text-white/80">{official.group}</p>
-              <h3 id="official-profile-title" className="mt-1 text-2xl font-bold leading-tight">
+            <div className="min-w-0">
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-white/80 sm:text-sm sm:tracking-[0.18em]">
+                {official.group}
+              </p>
+              <h3
+                id="official-profile-title"
+                className="mt-1 text-xl font-bold leading-tight sm:text-2xl"
+              >
                 {official.name}
               </h3>
               <p className="mt-2 text-sm font-semibold text-white">{official.designation}</p>
@@ -320,15 +252,22 @@ function OfficialProfileModal({ official, onClose }: { official: Official; onClo
           </div>
         </div>
 
-        <div className="grid gap-6 p-5 sm:p-6 md:grid-cols-[1fr_220px]">
+        <div className="grid max-h-[calc(92vh-132px)] gap-6 overflow-y-auto p-5 sm:p-6 md:grid-cols-[1fr_220px]">
           <div>
-            <h4 className="text-sm font-bold uppercase tracking-[0.16em] text-slate-500">Profile</h4>
+            <h4 className="text-sm font-bold uppercase tracking-[0.16em] text-slate-500">
+              Profile
+            </h4>
             <p className="mt-3 text-sm leading-relaxed text-slate-700">{official.bio}</p>
 
-            <h4 className="mt-6 text-sm font-bold uppercase tracking-[0.16em] text-slate-500">Focus Areas</h4>
+            <h4 className="mt-6 text-sm font-bold uppercase tracking-[0.16em] text-slate-500">
+              Focus Areas
+            </h4>
             <div className="mt-3 flex flex-wrap gap-2">
               {official.focus.map((item) => (
-                <span key={item} className="rounded-md bg-orange-50 px-3 py-1.5 text-xs font-semibold text-orange-800">
+                <span
+                  key={item}
+                  className="rounded-md bg-orange-50 px-3 py-1.5 text-xs font-semibold text-orange-800"
+                >
                   {item}
                 </span>
               ))}
