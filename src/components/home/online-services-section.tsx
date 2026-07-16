@@ -106,9 +106,6 @@ export default function OnlineServicesSection() {
             className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-950 leading-tight"
           >
             <span className="block">{t('home.services.title')}</span>
-            <span className="text-orange-700">
-              Citizen Services
-            </span>
           </h2>
           
           <p className="text-base sm:text-lg text-slate-600 max-w-3xl mx-auto leading-relaxed">
@@ -126,7 +123,7 @@ export default function OnlineServicesSection() {
         {/* Quick links bar - Modern Design */}
         <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
               <h3 className="text-2xl font-black text-slate-950 mb-6 text-center sm:text-left">
-                Quick Access
+                {locale === 'mr' ? 'जलद प्रवेश' : 'Quick Access'}
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 {quickLinks.map((item) => {

@@ -1,130 +1,180 @@
+'use client';
+
 import Image from 'next/image';
-import { readdir } from 'fs/promises';
-import { extname, join } from 'path';
+import Link from 'next/link';
+import { ArrowRight, Bell, FileText, CreditCard, Phone } from 'lucide-react';
+import { useTranslation } from '@/lib/i18n/LanguageContext';
 
-const SLIDER_DIR = join(process.cwd(), 'public', 'images', 'home-slider');
+// Real Unsplash city/municipal photos — no local files needed
+const slides = [
+  {
+    url: 'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=1600&q=85',
+    alt: 'Smart City',
+  },
+  {
+    url: 'https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?w=1600&q=85',
+    alt: 'City Skyline',
+  },
+  {
+    url: 'https://images.unsplash.com/photo-1519501025264-65ba15a82390?w=1600&q=85',
+    alt: 'Modern City',
+  },
+];
 
-async function getHeroSlides(): Promise<string[]> {
-  try {
-    const entries = await readdir(SLIDER_DIR, { withFileTypes: true });
-    return entries
-      .filter((entry) => entry.isFile())
-      .map((entry) => entry.name)
-      .filter((name) =>
-        ['.png', '.jpg', '.jpeg', '.webp', '.avif'].includes(extname(name).toLowerCase())
-      )
-      .sort((a, b) => a.localeCompare(b))
-      .map((name) => `/images/home-slider/${name}`);
-  } catch {
-    return [];
-  }
-}
+const stats = [
+  { valueMr: '४३७ चौ.किमी', valueEn: '437 km²',    labelMr: 'क्षेत्रफळ',    labelEn: 'Total Area' },
+  { valueMr: '१२ लाख+',    valueEn: '12 Lakh+',    labelMr: 'लोकसंख्या',    labelEn: 'Population' },
+  { valueMr: '११५',         valueEn: '115',          labelMr: 'प्रभाग',       labelEn: 'Wards' },
+  { valueMr: '५०+',         valueEn: '50+',          labelMr: 'ऑनलाइन सेवा', labelEn: 'Services' },
+];
 
-const MOTION_CLASSES = [
-  'hero-motion-zoom-left',
-  'hero-motion-zoom-out-up',
-  'hero-motion-tilt-zoom',
-] as const;
+export default function HeroSection() {
+  const { t, locale } = useTranslation();
 
-/**
- * Hero section — Phase 1 rebuild.
- *
- * Uses next/image instead of CSS backgroundImage so the browser receives
- * correctly-sized WebP/AVIF srcsets rather than one oversized file.
- *
- * The first slide is loaded with priority={true} (LCP candidate).
- * Remaining slides use lazy loading (loaded only when they animate into view).
- *
- * No autoplay video — spec requirement (csmc-website-redesign-spec.md §6).
- * CSS animation classes (hero-motion-*) are defined in globals.css and remain
- * unchanged; we simply preserve the CSS-driven slideshow behaviour.
- */
-export default async function HeroSection() {
-  const heroSlides = await getHeroSlides();
-  const slideCount = heroSlides.length;
-  const slotSeconds = 7;
-  const totalCycleSeconds = Math.max(slotSeconds * slideCount, slotSeconds);
-
-  // Fallback: if no slides found, show a solid saffron/CSMC-branded background
-  if (slideCount === 0) {
-    return (
-      <section
-        className="relative h-[48vh] min-h-[320px] overflow-hidden sm:h-[58vh] lg:h-[68vh] bg-gradient-to-br from-orange-700 to-amber-600"
-        aria-label="CSMC मुख्यपृष्ठ"
-      >
-        <div className="absolute inset-0 flex items-center justify-center">
-          <p className="text-white/60 text-lg font-medium">
-            छत्रपती संभाजीनगर महानगरपालिका
-          </p>
-        </div>
-      </section>
-    );
-  }
+  const quickActions = [
+    {
+      icon: CreditCard,
+      labelMr: 'कर भरा',
+      labelEn: 'Pay Tax',
+      href: '/citizen/property-tax',
+      color: 'bg-orange-500',
+    },
+    {
+      icon: FileText,
+      labelMr: 'तक्रार',
+      labelEn: 'Complaint',
+      href: '/citizen/complaints/new',
+      color: 'bg-red-500',
+    },
+    {
+      icon: Bell,
+      labelMr: 'प्रमाणपत्र',
+      labelEn: 'Certificate',
+      href: '/citizen/certificates',
+      color: 'bg-blue-500',
+    },
+    {
+      icon: Phone,
+      labelMr: 'संपर्क',
+      labelEn: 'Contact',
+      href: '/contact',
+      color: 'bg-green-500',
+    },
+  ];
 
   return (
-    <section
-      className="relative h-[48vh] min-h-[340px] overflow-hidden sm:h-[58vh] lg:h-[68vh]"
-      aria-label="Home image slider"
-    >
-      {/* Dark base layer — prevents flash of unstyled content while images load */}
-      <div className="absolute inset-0 bg-slate-950" aria-hidden="true" />
+    <section className="relative h-[92vh] min-h-[580px] max-h-[800px] overflow-hidden" aria-label="Hero">
 
+      {/* ── Sliding background images ──────────────────────────── */}
       <div className="absolute inset-0">
-        {slideCount === 1 ? (
-          /* Single slide — priority LCP image, no animation needed */
-          <Image
-            src={heroSlides[0]}
-            alt="छत्रपती संभाजीनगर महानगरपालिका — मुख्य दृश्य"
-            fill
-            sizes="100vw"
-            className="object-cover object-center hero-slide-single"
-            priority
-            quality={85}
-          />
-        ) : (
-          heroSlides.map((slide, index) => (
-            <div
-              key={slide}
-              className={`hero-slide ${MOTION_CLASSES[index % MOTION_CLASSES.length]} absolute inset-0`}
-              style={{
-                ['--delay' as string]: `${index * slotSeconds}s`,
-                ['--cycle' as string]: `${totalCycleSeconds}s`,
-              }}
-            >
-              <Image
-                src={slide}
-                alt={`छत्रपती संभाजीनगर महानगरपालिका — दृश्य ${index + 1}`}
-                fill
-                sizes="100vw"
-                className="object-cover object-center"
-                /*
-                 * Only the first (immediately visible) slide is loaded with
-                 * priority. Others are lazy-loaded; they will be in the DOM
-                 * but the browser fetches them only when needed.
-                 */
-                priority={index === 0}
-                quality={index === 0 ? 85 : 75}
-              />
-            </div>
-          ))
-        )}
+        {slides.map((slide, i) => (
+          <div
+            key={slide.url}
+            className="hero-slide absolute inset-0"
+            style={{
+              ['--delay' as string]: `${i * 7}s`,
+              ['--cycle' as string]: `${slides.length * 7}s`,
+            }}
+          >
+            <Image
+              src={slide.url}
+              alt={slide.alt}
+              fill
+              className="object-cover object-center"
+              priority={i === 0}
+              quality={i === 0 ? 90 : 75}
+              sizes="100vw"
+            />
+          </div>
+        ))}
       </div>
 
-      <div className="absolute inset-0 bg-gradient-to-r from-slate-950/55 via-slate-950/20 to-transparent" aria-hidden="true" />
-      <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-slate-50 to-transparent" aria-hidden="true" />
+      {/* ── Overlays ───────────────────────────────────────────── */}
+      <div className="absolute inset-0 bg-gradient-to-r from-slate-950/80 via-slate-950/50 to-slate-950/20" />
+      <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent" />
 
-      <div className="container-custom relative z-10 flex h-full items-end pb-10 sm:pb-14">
-        <div className="max-w-2xl text-white">
-          <p className="mb-3 inline-flex rounded-lg bg-white/15 px-3 py-1.5 text-sm font-semibold backdrop-blur-md ring-1 ring-white/20">
-            CSMC Citizen Portal
-          </p>
-          <h2 className="text-3xl font-bold tracking-tight sm:text-5xl">
-            Smart municipal services for every citizen
-          </h2>
-          <p className="mt-4 max-w-xl text-base text-white/85 sm:text-lg">
-            Access payments, certificates, complaints, notices and public information in one place.
-          </p>
+      {/* ── Content ────────────────────────────────────────────── */}
+      <div className="container-custom relative z-10 flex h-full flex-col justify-end pb-12 sm:pb-16 lg:pb-20">
+
+        {/* Badge */}
+        <div className="mb-4">
+          <span className="inline-flex items-center gap-2 rounded-full bg-orange-500/90 backdrop-blur-sm px-4 py-1.5 text-xs font-bold text-white uppercase tracking-widest">
+            <span className="h-1.5 w-1.5 rounded-full bg-white animate-pulse" />
+            {locale === 'mr' ? 'छत्रपती संभाजीनगर महानगरपालिका' : 'CSMC — Smart Citizen Portal'}
+          </span>
         </div>
+
+        {/* Title */}
+        <h1 className="text-3xl font-black text-white sm:text-5xl lg:text-6xl leading-tight max-w-3xl mb-4">
+          {locale === 'mr'
+            ? <>स्मार्ट नागरी सेवा<br /><span className="text-orange-400">एकाच ठिकाणी</span></>
+            : <>Smart Municipal<br /><span className="text-orange-400">Services Online</span></>
+          }
+        </h1>
+
+        {/* Subtitle */}
+        <p className="text-base text-white/80 max-w-xl mb-8 leading-relaxed sm:text-lg">
+          {locale === 'mr'
+            ? 'मालमत्ता कर, पाणीपट्टी, तक्रारी, प्रमाणपत्रे — सर्व सेवा घरबसल्या मिळवा.'
+            : 'Property tax, water bills, complaints, certificates — all services from home.'}
+        </p>
+
+        {/* CTA Buttons */}
+        <div className="flex flex-wrap gap-3 mb-10">
+          <Link
+            href="/citizen/dashboard"
+            className="inline-flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white font-bold px-6 py-3 rounded-xl transition-all hover:scale-105 shadow-lg"
+          >
+            {locale === 'mr' ? 'सेवा सुरू करा' : 'Get Started'}
+            <ArrowRight size={18} />
+          </Link>
+          <Link
+            href="/citizen/complaints/track"
+            className="inline-flex items-center gap-2 bg-white/15 hover:bg-white/25 backdrop-blur-sm text-white font-bold px-6 py-3 rounded-xl border border-white/30 transition-all hover:scale-105"
+          >
+            {locale === 'mr' ? 'तक्रार ट्रॅक करा' : 'Track Complaint'}
+          </Link>
+        </div>
+
+        {/* Stats */}
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 max-w-2xl mb-10">
+          {stats.map((stat, i) => (
+            <div key={i} className="bg-white/10 backdrop-blur-sm rounded-xl px-4 py-3 border border-white/20 text-center">
+              <div className="text-xl font-black text-white sm:text-2xl">
+                {locale === 'mr' ? stat.valueMr : stat.valueEn}
+              </div>
+              <div className="text-xs text-white/70 mt-0.5 font-medium">
+                {locale === 'mr' ? stat.labelMr : stat.labelEn}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Quick Action Pills */}
+        <div className="flex flex-wrap gap-2">
+          {quickActions.map((action, i) => {
+            const Icon = action.icon;
+            return (
+              <Link
+                key={i}
+                href={action.href}
+                className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/25 backdrop-blur-sm text-white text-sm font-semibold px-4 py-2 rounded-full border border-white/20 transition-all hover:scale-105 hover:border-white/50"
+              >
+                <span className={`w-5 h-5 ${action.color} rounded-full flex items-center justify-center`}>
+                  <Icon size={12} />
+                </span>
+                {locale === 'mr' ? action.labelMr : action.labelEn}
+              </Link>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* ── Slide dots indicator ───────────────────────────────── */}
+      <div className="absolute bottom-4 right-6 z-10 flex gap-1.5">
+        {slides.map((_, i) => (
+          <div key={i} className="h-1.5 w-6 rounded-full bg-white/40" />
+        ))}
       </div>
     </section>
   );
