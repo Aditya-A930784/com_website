@@ -37,7 +37,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="mr" className={`${inter.variable} ${notoSansDevanagari.variable}`}>
+    <html lang="mr" suppressHydrationWarning className={`${inter.variable} ${notoSansDevanagari.variable}`}>
       <head>
         <script
           dangerouslySetInnerHTML={{

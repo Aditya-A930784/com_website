@@ -55,8 +55,6 @@ export const LanguageProvider = ({ children }: { children: React.ReactNode }) =>
   useEffect(() => {
     if (pathname.startsWith('/en')) {
       setLocaleState('en');
-    } else if (pathname.startsWith('/hi')) {
-      setLocaleState('hi' as Locale);
     } else {
       // No locale prefix — respect what the user last explicitly chose
       const saved = (typeof window !== 'undefined'
@@ -65,6 +63,12 @@ export const LanguageProvider = ({ children }: { children: React.ReactNode }) =>
       setLocaleState(saved === 'en' ? 'en' : 'mr');
     }
   }, [pathname]);
+
+  // Keep the document language accurate for assistive technology, browser
+  // translation, spell checking, and language-aware typography.
+  useEffect(() => {
+    document.documentElement.lang = locale;
+  }, [locale]);
 
   // 2. Update locale state and persist to localStorage.
   // No URL navigation is needed — all subpages (/about, /services, etc.) are

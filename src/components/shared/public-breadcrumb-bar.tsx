@@ -14,7 +14,7 @@ export function PublicBreadcrumbBar() {
   const pathname = usePathname();
   
   // Render nothing on home route
-  if (pathname === '/' || pathname === '/en' || pathname === '/hi' || pathname === '/mr') {
+  if (pathname === '/' || pathname === '/en' || pathname === '/mr') {
     return null;
   }
 

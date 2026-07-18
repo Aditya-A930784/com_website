@@ -1,10 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const LOCALES = ['en', 'mr', 'hi'] as const;
-type Locale = (typeof LOCALES)[number];
+const LOCALES = ['en', 'mr'] as const;
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  // Hindi is not currently translated. Send legacy Hindi URLs to the
+  // Marathi homepage rather than letting the generic [locale] route render
+  // an unsupported language.
+  if (pathname === '/hi' || pathname.startsWith('/hi/')) {
+    return NextResponse.redirect(new URL('/', request.url));
+  }
 
   // If the path already starts with a valid locale prefix, pass it through.
   // Do NOT redirect/strip — LanguageContext relies on the /en prefix being

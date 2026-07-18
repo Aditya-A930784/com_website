@@ -4,96 +4,107 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ArrowUpRight, Building2, ExternalLink, Mail, Phone, ShieldCheck, X } from 'lucide-react';
+import { ArrowRight, Building2, ExternalLink, Mail, Phone, ShieldCheck, X } from 'lucide-react';
 
-import { officialGroups, officials, type Official } from '@/lib/constants/officials';
+import { officials, type Official } from '@/lib/constants/officials';
 import { useTranslation } from '@/lib/i18n/LanguageContext';
+
+type DirectoryFilter = 'Leadership' | 'Administration' | 'Departments';
+
+const directoryFilters: DirectoryFilter[] = ['Leadership', 'Administration', 'Departments'];
 
 export default function OfficialsSection() {
   const { t } = useTranslation();
   const [selectedOfficial, setSelectedOfficial] = useState<Official | null>(null);
+  const [activeFilter, setActiveFilter] = useState<DirectoryFilter>('Leadership');
+  const filteredOfficials = officials.filter((official) => {
+    if (activeFilter === 'Leadership') return official.group !== 'Administration';
+    if (activeFilter === 'Administration') return official.group === 'Administration';
+    return official.department.includes('Chhatrapati Sambhajinagar Municipal Corporation');
+  });
 
   return (
     <section
       className="relative overflow-hidden bg-slate-50 py-12 sm:py-16 lg:py-24"
       aria-labelledby="officials-heading"
     >
-      <div
-        className="absolute inset-x-0 top-0 h-48 bg-gradient-to-b from-slate-100 to-transparent"
-        aria-hidden
-      />
       <div className="container-custom relative">
         <motion.div
-          className="mx-auto mb-10 max-w-3xl text-center sm:mb-12"
+          className="overflow-hidden rounded-2xl bg-slate-950 px-5 py-8 text-white shadow-lg sm:px-8 sm:py-10 lg:px-10"
           initial={{ opacity: 0, y: 18 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.35 }}
           transition={{ duration: 0.55, ease: 'easeOut' }}
         >
-          <span className="inline-flex items-center gap-2 rounded-lg bg-orange-100 px-3.5 py-2 text-xs font-semibold text-orange-800 sm:px-4 sm:text-sm">
-            <ShieldCheck size={16} aria-hidden />
-            {t('home.officials.tag')}
-          </span>
-          <h2
-            id="officials-heading"
-            className="mt-4 text-2xl font-bold text-slate-950 sm:text-3xl lg:text-4xl"
-          >
-            {t('home.officials.title')}
-          </h2>
-          <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-slate-600 md:text-base">
-            {t('home.officials.description')}
-          </p>
+          <div className="flex flex-col justify-between gap-7 lg:flex-row lg:items-end">
+            <div className="max-w-2xl">
+              <span className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-orange-300">
+                <ShieldCheck size={15} aria-hidden />
+                {t('home.officials.tag')}
+              </span>
+              <h2 id="officials-heading" className="mt-3 text-2xl font-bold tracking-tight sm:text-3xl lg:text-4xl">
+                {t('home.officials.title')}
+              </h2>
+              <p className="mt-3 text-sm leading-relaxed text-slate-300 md:text-base">
+                {t('home.officials.description')}
+              </p>
+            </div>
+            <p className="border-l-2 border-orange-500 pl-3 text-sm font-semibold text-slate-200">
+              Official directory · {officials.length} profiles
+            </p>
+          </div>
         </motion.div>
 
-        <div className="space-y-9 lg:space-y-12">
-          {officialGroups.map((group, groupIndex) => {
-            const groupedOfficials = officials.filter((official) => official.group === group);
-
-            return (
-              <motion.div
-                key={group}
-                initial={{ opacity: 0, y: 24 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.18 }}
-                transition={{ duration: 0.55, delay: groupIndex * 0.08, ease: 'easeOut' }}
+        <div className="mt-6 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+          <div className="flex flex-wrap gap-2" aria-label="Official directory filters">
+            {directoryFilters.map((filter) => (
+              <button
+                key={filter}
+                type="button"
+                onClick={() => setActiveFilter(filter)}
+                aria-pressed={activeFilter === filter}
+                className={`rounded-full px-4 py-2 text-sm font-bold transition ${
+                  activeFilter === filter
+                    ? 'bg-orange-600 text-white shadow-sm'
+                    : 'border border-slate-200 bg-white text-slate-700 hover:border-orange-300 hover:text-orange-800'
+                }`}
               >
-                <div className="mb-4 flex items-center justify-between gap-4">
-                  <div className="flex min-w-0 items-center gap-3">
-                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-white text-orange-700 shadow-sm ring-1 ring-slate-200">
-                      <Building2 size={20} aria-hidden />
-                    </span>
-                    <div className="min-w-0">
-                      <h3 className="truncate text-base font-bold text-slate-950 sm:text-lg">
-                        {group}
-                      </h3>
-                      <p className="text-xs font-medium uppercase tracking-[0.16em] text-slate-500">
-                        {groupedOfficials.length} profiles
-                      </p>
-                    </div>
-                  </div>
-                </div>
+                {filter}
+              </button>
+            ))}
+          </div>
+          <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">
+            <Building2 size={15} aria-hidden />
+            {filteredOfficials.length} listed
+          </p>
+        </div>
 
-                <motion.div
-                  className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 xl:grid-cols-3"
-                  variants={{
-                    visible: { transition: { staggerChildren: 0.08 } },
-                  }}
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true, amount: 0.16 }}
-                  role="list"
-                >
-                  {groupedOfficials.map((official) => (
-                    <OfficialCard
-                      key={`${official.name}-${official.designation}`}
-                      official={official}
-                      onOpen={() => setSelectedOfficial(official)}
-                    />
-                  ))}
-                </motion.div>
-              </motion.div>
-            );
-          })}
+        <motion.div
+          className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 xl:grid-cols-3"
+          variants={{ visible: { transition: { staggerChildren: 0.08 } } }}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.16 }}
+          role="list"
+        >
+          {filteredOfficials.map((official) => (
+            <OfficialCard
+              key={`${official.name}-${official.designation}`}
+              official={official}
+              onOpen={() => setSelectedOfficial(official)}
+            />
+          ))}
+        </motion.div>
+
+        <div className="mt-7 flex flex-col items-start justify-between gap-4 rounded-xl border border-slate-200 bg-white px-5 py-4 sm:flex-row sm:items-center sm:px-6">
+          <p className="text-sm text-slate-600">Need a department contact or the complete list of municipal offices?</p>
+          <Link
+            href="/about/officials"
+            className="inline-flex items-center gap-2 text-sm font-bold text-orange-700 transition hover:text-orange-800"
+          >
+            Contact directory
+            <ArrowRight size={16} aria-hidden />
+          </Link>
         </div>
       </div>
 
@@ -112,28 +123,23 @@ export default function OfficialsSection() {
 function OfficialCard({ official, onOpen }: { official: Official; onOpen: () => void }) {
   return (
     <motion.article
-      className="group relative flex min-h-[360px] overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm sm:min-h-[410px]"
+      className="group relative flex min-h-[315px] overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition-shadow hover:shadow-md"
       variants={{
         hidden: { opacity: 0, y: 24, scale: 0.98 },
         visible: { opacity: 1, y: 0, scale: 1 },
       }}
       transition={{ duration: 0.5, ease: 'easeOut' }}
-      whileHover={{ y: -8 }}
+      whileHover={{ y: -4 }}
       role="listitem"
     >
       <div
-        className="absolute inset-x-0 top-0 h-20 bg-slate-800 sm:h-24"
+        className="absolute inset-x-0 top-0 h-16 bg-slate-950"
         aria-hidden
       />
-      <motion.div
-        className="absolute right-4 top-4 h-10 w-10 rounded-full border border-white/20 bg-white/10 backdrop-blur sm:right-5 sm:top-5 sm:h-12 sm:w-12"
-        animate={{ rotate: [0, 8, 0], scale: [1, 1.05, 1] }}
-        transition={{ duration: 4.8, repeat: Infinity, ease: 'easeInOut' }}
-        aria-hidden
-      />
+      <div className="absolute inset-x-0 top-0 h-1 bg-orange-500" aria-hidden />
 
-      <div className="relative flex w-full flex-col px-4 pb-4 pt-8 sm:px-5 sm:pb-5 sm:pt-10">
-        <div className="mx-auto h-24 w-24 overflow-hidden rounded-full border-4 border-white bg-white shadow-lg ring-1 ring-slate-200 sm:h-28 sm:w-28">
+      <div className="relative flex w-full flex-col px-5 pb-5 pt-8">
+        <div className="mx-auto h-24 w-24 overflow-hidden rounded-full border-4 border-white bg-white shadow-lg ring-1 ring-slate-200">
           <Image
             src={official.image}
             alt={official.name}
@@ -144,49 +150,26 @@ function OfficialCard({ official, onOpen }: { official: Official; onOpen: () => 
           />
         </div>
 
-        <div className="mt-4 text-center sm:mt-5">
-          <h4 className="text-lg font-bold leading-tight text-slate-950 sm:text-xl">
+        <div className="mt-4 text-center">
+          <h3 className="text-lg font-bold leading-tight text-slate-950 sm:text-xl">
             {official.name}
-          </h4>
+          </h3>
           <p className="mt-2 text-sm font-semibold text-orange-700">{official.designation}</p>
-          <p className="mx-auto mt-1 max-w-[18rem] text-xs font-medium uppercase tracking-[0.12em] text-slate-500 sm:tracking-[0.16em]">
+          <p className="mx-auto mt-1 max-w-[18rem] text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">
             {official.department}
           </p>
         </div>
 
-        <p className="mt-3 line-clamp-3 text-center text-sm leading-relaxed text-slate-600 sm:mt-4">
-          {official.bio}
-        </p>
-
-        <div className="mt-4 flex flex-wrap justify-center gap-2 sm:mt-5">
-          {official.focus.slice(0, 2).map((item) => (
-            <span
-              key={item}
-              className="rounded-md bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-700"
-            >
-              {item}
-            </span>
-          ))}
-        </div>
-
-        <div className="mt-auto grid grid-cols-[1fr_1fr] items-center gap-2 pt-5">
-          <Link
-            href={`mailto:${official.email}`}
-            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-orange-200 bg-orange-50 px-3 py-2 text-sm font-semibold text-orange-800 transition hover:border-orange-300 hover:bg-orange-100"
-            aria-label={`Email ${official.name}`}
-          >
-            <Mail size={17} aria-hidden />
-            <span>Contact Office</span>
-          </Link>
+        <div className="mt-auto pt-6">
           <motion.button
             type="button"
             onClick={onOpen}
-            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-slate-950 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-orange-700"
+            className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-slate-950 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-orange-700"
             whileTap={{ scale: 0.96 }}
             aria-label={`View profile for ${official.name}`}
           >
             View Profile
-            <ArrowUpRight size={16} aria-hidden />
+            <ArrowRight size={16} aria-hidden />
           </motion.button>
         </div>
       </div>
