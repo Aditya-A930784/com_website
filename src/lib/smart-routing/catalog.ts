@@ -39,6 +39,10 @@ export const SERVICE_CATALOG: ServiceEntry[] = [
       'कर बिल', 'टॅक्स', 'property tax', 'house tax', 'ghar patti', 'gharpatti',
       'malmatta kar', 'kar', 'kar bharaycha aahe', 'tax invoice', 'tax receipt',
       'tax bill', 'pay tax',
+      // Hindi
+      'संपत्ति कर', 'मकान कर', 'कर जमा', 'टैक्स भरो', 'हाउस टैक्स', 'संपत्ति टैक्स',
+      // Dakhni/Urdu
+      'مکان ٹیکس', 'tax bharo', 'ghar ka tax',
     ],
     stepsMr: ['मालमत्ता क्रमांक टाका', 'रक्कम तपासा', 'ऑनलाइन भरा', 'पावती डाउनलोड करा'],
     stepsEn: ['Enter property number', 'Check the amount', 'Pay online', 'Download receipt'],
@@ -52,6 +56,10 @@ export const SERVICE_CATALOG: ServiceEntry[] = [
     aliases: [
       'पाणीपट्टी', 'पाणी बिल', 'पाणीपट्टी भरा', 'नळ बिल', 'पाणी कर', 'पाण्याचे बिल',
       'water bill', 'paani patti', 'panipatti', 'nal bill', 'water tax', 'pay water bill',
+      // Hindi
+      'पानी का बिल', 'पानी बिल', 'पानी भरो', 'नल का बिल', 'पेयजल शुल्क',
+      // Dakhni
+      'پانی بل', 'pani ka bill', 'nal bill bharo',
     ],
     stepsMr: ['ग्राहक क्रमांक टाका', 'बिल तपासा', 'ऑनलाइन भरा', 'पावती घ्या'],
     stepsEn: ['Enter consumer number', 'Check the bill', 'Pay online', 'Get receipt'],
@@ -70,6 +78,11 @@ export const SERVICE_CATALOG: ServiceEntry[] = [
       'रस्ता खराब', 'खड्डे', 'ड्रेनेज', 'गटार', 'स्ट्रीट लाइट', 'दिवा बंद', 'डास',
       'स्वच्छता', 'no water', 'garbage', 'road', 'pothole', 'drainage', 'street light',
       'sewage', 'mosquito',
+      // Hindi symptom phrases
+      'पानी नहीं आता', 'नल में पानी नहीं', 'कचरा नहीं उठा', 'सड़क खराब', 'गड्ढे',
+      'नाली', 'बत्ती बंद', 'मच्छर', 'शिकायत', 'शिकायत दर्ज', 'समस्या है',
+      // Dakhni
+      'پانی نئیں آتا', 'کوڑا', 'شکایت', 'problem hai', 'shikayat', 'kachra',
     ],
     stepsMr: ['समस्या निवडा', 'स्थान टाका', 'फोटो जोडा', 'सबमिट करा — तक्रार क्रमांक मिळेल'],
     stepsEn: ['Pick the issue', 'Add location', 'Attach a photo', 'Submit — get a complaint ID'],
@@ -96,6 +109,8 @@ export const SERVICE_CATALOG: ServiceEntry[] = [
     aliases: [
       'जन्म दाखला', 'जन्म प्रमाणपत्र', 'नवजात दाखला', 'birth certificate',
       'janma dakhla', 'janm praman patra', 'baby certificate',
+      // Hindi
+      'जन्म प्रमाण पत्र', 'जन्म सर्टिफिकेट', 'जन्म दस्तावेज', 'बच्चे का जन्म प्रमाण पत्र',
     ],
     stepsMr: ['अर्ज भरा', 'कागदपत्रे जोडा', 'सबमिट करा', 'स्थिती तपासा'],
     stepsEn: ['Fill the form', 'Attach documents', 'Submit', 'Track status'],
@@ -228,7 +243,8 @@ export const SERVICE_CATALOG: ServiceEntry[] = [
     iconKey: 'contact',
     titleMr: 'संपर्क',
     titleEn: 'Contact',
-    aliases: ['संपर्क', 'फोन', 'पत्ता', 'हेल्पलाइन', 'contact', 'phone', 'address', 'helpline'],
+    aliases: ['संपर्क', 'फोन', 'पत्ता', 'हेल्पलाइन', 'contact', 'phone', 'address', 'helpline',
+      'संपर्क करें', 'फ़ोन नंबर', 'हेल्पलाइन नंबर', 'office address'],
   },
   {
     id: 'help-faq',

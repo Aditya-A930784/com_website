@@ -1,39 +1,71 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { CheckCircle2, Circle, ChevronDown, ChevronUp, X, ListChecks, PartyPopper } from 'lucide-react';
+import { useEffect, useState, useRef } from 'react';
+import { usePathname } from 'next/navigation';
+import {
+  CheckCircle2, Circle, ChevronDown, ChevronUp, X,
+  ListChecks, PartyPopper, Volume2, VolumeX,
+} from 'lucide-react';
 import { cn } from '@/lib/utils/cn';
 import { useGuidanceStore } from '@/lib/smart-routing/guidance-store';
+import { trackStep } from '@/lib/smart-routing/telemetry';
 import { useTranslation } from '@/lib/i18n/LanguageContext';
 
-/**
- * GuidanceCompanion — floating persistent checklist.
- *
- * Mounts once in the public layout. Becomes visible when a citizen selects a
- * service from SmartSearchSection (which calls useGuidanceStore.startGuidance).
- * Survives page navigations via Zustand + localStorage.
- */
 export default function GuidanceCompanion() {
   const { locale } = useTranslation();
   const isMr = locale === 'mr';
+  const pathname = usePathname();
 
   const {
     activeServiceId,
-    titleMr,
-    titleEn,
-    stepsMr,
-    stepsEn,
+    titleMr, titleEn,
+    stepsMr, stepsEn,
     currentStep,
     isMinimized,
     completeStep,
-    minimize,
-    expand,
-    dismiss,
+    minimize, expand, dismiss,
   } = useGuidanceStore();
 
-  // Avoid hydration mismatch — only render after mount (localStorage may differ from SSR)
   const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
+  const [ttsEnabled, setTtsEnabled] = useState(true);
+  const [ttsSupported, setTtsSupported] = useState(false);
+  const prevStepRef = useRef<number>(-99);
+  const prevPathRef = useRef<string>('');
+
+  useEffect(() => {
+    setMounted(true);
+    setTtsSupported(typeof window !== 'undefined' && 'speechSynthesis' in window);
+  }, []);
+
+  // E2 · Route-aware auto-advance
+  // When the citizen navigates to a new page while guidance is active, assume
+  // they completed the current step (they clicked through to the right place).
+  useEffect(() => {
+    if (!activeServiceId || currentStep < 0) return;
+    if (prevPathRef.current && prevPathRef.current !== pathname) {
+      completeStep();
+      trackStep(activeServiceId, currentStep, true);
+    }
+    prevPathRef.current = pathname;
+  }, [pathname, activeServiceId, currentStep, completeStep]);
+
+  // E1 · TTS — speak the active step when it changes
+  useEffect(() => {
+    if (!mounted || !ttsEnabled || !ttsSupported) return;
+    if (!activeServiceId || currentStep < 0) return;
+    if (prevStepRef.current === currentStep) return;
+    prevStepRef.current = currentStep;
+
+    const steps = isMr ? stepsMr : stepsEn;
+    const text = steps[currentStep];
+    if (!text) return;
+
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = isMr ? 'mr-IN' : 'en-IN';
+    utterance.rate = 0.9;
+    window.speechSynthesis.speak(utterance);
+  }, [currentStep, isMr, stepsMr, stepsEn, activeServiceId, ttsEnabled, ttsSupported, mounted]);
 
   // Auto-dismiss 3s after completion
   useEffect(() => {
@@ -43,13 +75,21 @@ export default function GuidanceCompanion() {
     }
   }, [currentStep, dismiss]);
 
+  // Track manual done-button presses
+  function handleCompleteStep() {
+    if (activeServiceId && currentStep >= 0) {
+      trackStep(activeServiceId, currentStep, true);
+    }
+    completeStep();
+  }
+
   if (!mounted || !activeServiceId) return null;
 
   const steps = isMr ? stepsMr : stepsEn;
   const title = isMr ? titleMr : titleEn;
   const isCompleted = currentStep === -1;
 
-  // ── Minimized tab ──────────────────────────────────────────────────────────
+  // ── Minimized ──────────────────────────────────────────────────────────────
   if (isMinimized) {
     return (
       <button
@@ -67,19 +107,15 @@ export default function GuidanceCompanion() {
     );
   }
 
-  // ── Completed state ────────────────────────────────────────────────────────
+  // ── Completed ──────────────────────────────────────────────────────────────
   if (isCompleted) {
     return (
       <div className="fixed bottom-6 right-6 z-50 w-72 rounded-2xl bg-green-600 p-5 text-white shadow-2xl animate-in slide-in-from-bottom-4">
         <div className="flex items-center gap-3">
           <PartyPopper size={28} />
           <div>
-            <div className="font-bold text-base">
-              {isMr ? 'पूर्ण झाले!' : 'All done!'}
-            </div>
-            <div className="text-sm text-white/80">
-              {isMr ? 'सर्व पायऱ्या पूर्ण झाल्या.' : 'All steps completed.'}
-            </div>
+            <div className="font-bold text-base">{isMr ? 'पूर्ण झाले!' : 'All done!'}</div>
+            <div className="text-sm text-white/80">{isMr ? 'सर्व पायऱ्या पूर्ण झाल्या.' : 'All steps completed.'}</div>
           </div>
         </div>
       </div>
@@ -100,18 +136,22 @@ export default function GuidanceCompanion() {
         <span className="rounded-full bg-white/20 px-2 py-0.5 text-xs text-white/90">
           {currentStep + 1}/{steps.length}
         </span>
-        <button
-          onClick={minimize}
-          aria-label={isMr ? 'लहान करा' : 'Minimize'}
-          className="ml-1 flex h-7 w-7 items-center justify-center rounded-lg text-white/70 hover:bg-white/15 hover:text-white transition"
-        >
+
+        {/* E1 · TTS toggle */}
+        {ttsSupported && (
+          <button
+            onClick={() => setTtsEnabled((v) => !v)}
+            aria-label={ttsEnabled ? (isMr ? 'आवाज बंद करा' : 'Mute') : (isMr ? 'आवाज चालू करा' : 'Unmute')}
+            className="flex h-7 w-7 items-center justify-center rounded-lg text-white/70 hover:bg-white/15 hover:text-white transition"
+          >
+            {ttsEnabled ? <Volume2 size={15} /> : <VolumeX size={15} />}
+          </button>
+        )}
+
+        <button onClick={minimize} aria-label={isMr ? 'लहान करा' : 'Minimize'} className="flex h-7 w-7 items-center justify-center rounded-lg text-white/70 hover:bg-white/15 hover:text-white transition">
           <ChevronDown size={16} />
         </button>
-        <button
-          onClick={dismiss}
-          aria-label={isMr ? 'बंद करा' : 'Close'}
-          className="flex h-7 w-7 items-center justify-center rounded-lg text-white/70 hover:bg-white/15 hover:text-white transition"
-        >
+        <button onClick={dismiss} aria-label={isMr ? 'बंद करा' : 'Close'} className="flex h-7 w-7 items-center justify-center rounded-lg text-white/70 hover:bg-white/15 hover:text-white transition">
           <X size={16} />
         </button>
       </div>
@@ -149,19 +189,17 @@ export default function GuidanceCompanion() {
       <div className="mx-4 h-1.5 rounded-full bg-gray-100 overflow-hidden">
         <div
           className="h-full rounded-full bg-primary-500 transition-all duration-500"
-          style={{ width: `${((currentStep) / steps.length) * 100}%` }}
+          style={{ width: `${(currentStep / steps.length) * 100}%` }}
         />
       </div>
 
-      {/* Action footer */}
+      {/* Footer */}
       <div className="flex items-center justify-between px-4 py-3">
         <p className="text-xs text-gray-400">
-          {isMr
-            ? `पायरी ${currentStep + 1} / ${steps.length}`
-            : `Step ${currentStep + 1} of ${steps.length}`}
+          {isMr ? `पायरी ${currentStep + 1} / ${steps.length}` : `Step ${currentStep + 1} of ${steps.length}`}
         </p>
         <button
-          onClick={completeStep}
+          onClick={handleCompleteStep}
           className="inline-flex min-h-[40px] items-center gap-2 rounded-xl bg-primary-600 px-4 text-sm font-bold text-white hover:bg-primary-700 transition"
         >
           {isMr ? 'पूर्ण झाले →' : 'Done →'}
