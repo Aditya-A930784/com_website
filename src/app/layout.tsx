@@ -4,6 +4,7 @@ import './globals.css';
 import { Toaster } from 'react-hot-toast';
 import { LanguageProvider } from '@/lib/i18n/LanguageContext';
 import FloatingApps from '@/components/shared/floating-apps/FloatingApps';
+import GuidanceCompanion from '@/components/shared/guidance-companion';
 
 const inter = Inter({ 
   subsets: ['latin'],
@@ -60,6 +61,7 @@ export default function RootLayout({
         <LanguageProvider>
           {children}
           <FloatingApps />
+          <GuidanceCompanion />
         </LanguageProvider>
         <Toaster position="top-right" />
       </body>
