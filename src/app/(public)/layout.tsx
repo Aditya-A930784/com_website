@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Header from '@/components/layout/header';
 import Footer from '@/components/layout/footer';
 import { PublicBreadcrumbBar } from '@/components/shared';
+import GuidanceCompanion from '@/components/shared/guidance-companion';
 
 export const metadata: Metadata = {
   title: {
@@ -41,6 +42,7 @@ export default function PublicLayout({
       </main>
 
       <Footer />
+      <GuidanceCompanion />
     </div>
   );
 }

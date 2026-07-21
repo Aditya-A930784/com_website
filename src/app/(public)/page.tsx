@@ -1,4 +1,5 @@
 import HeroSection from '@/components/home/hero-section';
+import SmartSearchSection from '@/components/home/smart-search-section';
 import AboutSection from '@/components/home/about-section';
 import OnlineServicesSection from '@/components/home/online-services-section';
 import OfficialsSection from '@/components/home/officials-section';
@@ -29,6 +30,7 @@ export default function PublicHomePage() {
   return (
     <>
       <HeroSection />
+      <SmartSearchSection />
       <AboutSection />
       <OnlineServicesSection />
       <OfficialsSection />
