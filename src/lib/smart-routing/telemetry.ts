@@ -71,6 +71,37 @@ export function trackStep(serviceId: string, step: number, completed: boolean): 
   writeJSON(STEP_KEY, events.slice(-MAX_EVENTS));
 }
 
+// FAQ engagement telemetry — reveals what confuses citizens.
+// Signal for Commissioner: "60% of citizens on Step 2 opened 'How is my tax
+// calculated?' → the calculation isn't obvious enough → redesign the amount
+// screen with an inline breakdown by default."
+export type FAQEvent = {
+  serviceId: string;
+  step: number;
+  faqIndex: number;
+  ts: number;
+};
+const FAQ_KEY = 'csmc_telem_faqs';
+
+export function trackFAQOpen(serviceId: string, step: number, faqIndex: number): void {
+  const events = readJSON<FAQEvent[]>(FAQ_KEY, []);
+  events.push({ serviceId, step, faqIndex, ts: Date.now() });
+  writeJSON(FAQ_KEY, events.slice(-MAX_EVENTS));
+}
+
+export function getTopFAQs(limit = 10): { key: string; count: number }[] {
+  const events = readJSON<FAQEvent[]>(FAQ_KEY, []);
+  const counts: Record<string, number> = {};
+  for (const e of events) {
+    const key = `${e.serviceId}:step${e.step}:faq${e.faqIndex}`;
+    counts[key] = (counts[key] ?? 0) + 1;
+  }
+  return Object.entries(counts)
+    .map(([key, count]) => ({ key, count }))
+    .sort((a, b) => b.count - a.count)
+    .slice(0, limit);
+}
+
 // ── Read / Aggregate ──────────────────────────────────────────────────────────
 
 const WEEK_MS = 7 * 24 * 60 * 60 * 1000;

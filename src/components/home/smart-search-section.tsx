@@ -2,7 +2,7 @@
 
 import {
   useMemo, useState, useRef, useEffect, useCallback,
-  type ComponentType, type KeyboardEvent,
+  type KeyboardEvent,
 } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -11,6 +11,7 @@ import {
   IndianRupee, Droplets, Megaphone, ScrollText, BadgeCheck, CreditCard,
   Lock, Calculator, FileText, Users, Briefcase, Bell, Phone, HelpCircle,
   LayoutGrid, ListChecks, Clock, TrendingUp,
+  type LucideIcon,
 } from 'lucide-react';
 
 import { cn } from '@/lib/utils/cn';
@@ -26,7 +27,7 @@ import {
   type RecentService,
 } from '@/lib/smart-routing/telemetry';
 
-const ICONS: Record<string, ComponentType<{ size?: number; className?: string }>> = {
+const ICONS: Record<string, LucideIcon> = {
   tax: IndianRupee,
   water: Droplets,
   complaint: Megaphone,
@@ -56,8 +57,8 @@ const CHIPS: { mr: string; en: string; q: string }[] = [
 
 declare global {
   interface Window {
-    SpeechRecognition: typeof SpeechRecognition;
-    webkitSpeechRecognition: typeof SpeechRecognition;
+    SpeechRecognition: any;
+    webkitSpeechRecognition: any;
   }
 }
 
@@ -73,7 +74,7 @@ export default function SmartSearchSection() {
   const [weeklyCount, setWeeklyCount] = useState(0);
   const [mounted, setMounted] = useState(false);
   const startGuidance = useGuidanceStore((s) => s.startGuidance);
-  const recognitionRef = useRef<SpeechRecognition | null>(null);
+  const recognitionRef = useRef<any>(null);
 
   const isMr = locale === 'mr';
   const result = useMemo(() => (query.trim() ? classify(query) : null), [query]);
@@ -113,7 +114,7 @@ export default function SmartSearchSection() {
     recognition.maxAlternatives = 1;
     recognitionRef.current = recognition;
 
-    recognition.onresult = (event) => {
+    recognition.onresult = (event: any) => {
       const transcript = event.results[event.results.length - 1][0].transcript;
       setQuery(transcript);
     };
@@ -133,6 +134,7 @@ export default function SmartSearchSection() {
         titleEn: service.titleEn,
         stepsMr: service.stepsMr,
         stepsEn: service.stepsEn ?? service.stepsMr,
+        stepDetails: service.stepDetails,
       });
     }
     recordRecentService({
@@ -383,7 +385,7 @@ function ConfidentCard({ service, isMr, primary, secondary, steps, Icon, onLaunc
   service: ServiceEntry; isMr: boolean;
   primary: (s: ServiceEntry) => string; secondary: (s: ServiceEntry) => string;
   steps: (s: ServiceEntry) => string[] | undefined;
-  Icon: ComponentType<{ size?: number; className?: string }>;
+  Icon: LucideIcon;
   onLaunch: (service: ServiceEntry) => void;
 }) {
   const stepList = steps(service);
@@ -418,7 +420,7 @@ function ConfidentCard({ service, isMr, primary, secondary, steps, Icon, onLaunc
 function ResultRow({ service, primary, secondary, Icon, onLaunch }: {
   service: ServiceEntry;
   primary: (s: ServiceEntry) => string; secondary: (s: ServiceEntry) => string;
-  Icon: ComponentType<{ size?: number; className?: string }>;
+  Icon: LucideIcon;
   onLaunch: (service: ServiceEntry) => void;
 }) {
   return (

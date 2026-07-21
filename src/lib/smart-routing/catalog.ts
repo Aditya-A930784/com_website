@@ -16,6 +16,33 @@ import { ROUTES } from '@/lib/constants/routes';
  * `stepsMr/stepsEn` seed the "guidance checklist" idea — a tiny preview of the
  * flow shown on the result card. The full stateful companion is a later phase.
  */
+/**
+ * A rich per-step definition for guided workflows.
+ * When present on a ServiceEntry, GuidanceCompanion renders inline help + FAQs
+ * per step. Backwards-compatible: services can still use plain `stepsMr/stepsEn`
+ * string arrays for a simpler checklist experience.
+ *
+ * `sourceRef` is a placeholder for the future RAG citation layer — when Slice 3
+ * ships, this becomes the anchor into the retrieved doc chunk.
+ */
+export interface WorkflowFAQ {
+  qMr: string;
+  qEn: string;
+  aMr: string;
+  aEn: string;
+  sourceRef?: string; // e.g. 'property-tax-gr-2026.pdf#page=3'
+}
+
+export interface WorkflowStep {
+  titleMr: string;
+  titleEn: string;
+  helpMr?: string;   // one-liner shown under the step title in the companion
+  helpEn?: string;
+  hintMr?: string;   // validation / format hint, e.g. "12-digit number"
+  hintEn?: string;
+  faqs?: WorkflowFAQ[];
+}
+
 export interface ServiceEntry {
   id: string;
   route: string;
@@ -25,6 +52,7 @@ export interface ServiceEntry {
   aliases: string[];
   stepsMr?: string[];
   stepsEn?: string[];
+  stepDetails?: WorkflowStep[]; // when present, overrides stepsMr/stepsEn in the companion UI
 }
 
 export const SERVICE_CATALOG: ServiceEntry[] = [
@@ -46,6 +74,108 @@ export const SERVICE_CATALOG: ServiceEntry[] = [
     ],
     stepsMr: ['मालमत्ता क्रमांक टाका', 'रक्कम तपासा', 'ऑनलाइन भरा', 'पावती डाउनलोड करा'],
     stepsEn: ['Enter property number', 'Check the amount', 'Pay online', 'Download receipt'],
+    stepDetails: [
+      {
+        titleMr: 'मालमत्ता क्रमांक टाका',
+        titleEn: 'Enter property number',
+        helpMr: 'तुमच्या मागील कर पावतीवर १२-अंकी क्रमांक असतो.',
+        helpEn: 'A 12-digit number on your last property tax receipt.',
+        hintMr: 'फक्त अंक, कोणतेही स्पेस किंवा डॅश नाहीत',
+        hintEn: 'Digits only — no spaces or dashes',
+        faqs: [
+          {
+            qMr: 'मालमत्ता क्रमांक कसा शोधावा?',
+            qEn: 'How do I find my property number?',
+            aMr: 'तुमच्या मागील कर पावतीच्या वरच्या भागात १२-अंकी क्रमांक असतो. पावती हरवली असल्यास फोटो आयडी आणि पत्ता घेऊन प्रभाग कार्यालयात जा.',
+            aEn: 'It\'s a 12-digit number at the top of your last property tax receipt. If lost, visit the ward office with photo ID and property address.',
+          },
+          {
+            qMr: 'नुकतीच मालमत्ता विकत घेतली — काय क्रमांक वापरू?',
+            qEn: 'I recently bought this property — which number to use?',
+            aMr: 'नोंदणीनंतर ९० दिवसांपर्यंत जुन्या मालकाचा क्रमांक वापरू शकता. त्यानंतर सेल डीडसह प्रभाग कार्यालयात नाव हस्तांतरण करा.',
+            aEn: 'For 90 days after registration, use the previous owner\'s number. After that, transfer ownership at ward office with sale deed.',
+          },
+          {
+            qMr: 'क्रमांक स्वीकारला जात नाही?',
+            qEn: 'Property number not accepted?',
+            aMr: 'सामान्य कारणे: अतिरिक्त स्पेस किंवा डॅश. फक्त अंक टाका. तरीही चालत नसल्यास तुमची मालमत्ता अजून डिजिटलाइज्ड नसू शकते — प्रभाग कार्यालयाशी संपर्क साधा.',
+            aEn: 'Common causes: extra spaces or dashes. Try just digits. If still failing, your property may not be digitised yet — contact ward office.',
+          },
+        ],
+      },
+      {
+        titleMr: 'रक्कम तपासा',
+        titleEn: 'Check the amount',
+        helpMr: 'तुमचा कर कसा मोजला जातो हे पाहा आणि पुढे जा.',
+        helpEn: 'Review how your tax was calculated before paying.',
+        faqs: [
+          {
+            qMr: 'माझा कर कसा मोजला जातो?',
+            qEn: 'How is my tax calculated?',
+            aMr: 'कर = ARV (वार्षिक मूल्य) × कर दर. ARV = कार्पेट एरिया × नगरपालिका दर × १२ महिने. दर वापर (निवासी/व्यावसायिक) आणि क्षेत्रावर अवलंबून बदलतो. सविस्तर मोडणी "Breakdown" टॅबमध्ये पहा.',
+            aEn: 'Tax = ARV (Annual Rateable Value) × tax rate. ARV = Carpet area × municipal rate × 12. Rate varies by usage (residential/commercial) and locality. See the "Breakdown" tab for line-by-line detail.',
+          },
+          {
+            qMr: 'यंदा माझा कर वाढला — का?',
+            qEn: 'Why is my tax higher this year?',
+            aMr: 'सामान्यतः: (१) वार्षिक दर सुधारणा, (२) पुनर्वर्गीकरण (निवासी → व्यावसायिक), (३) क्षेत्रफळात बदल. "Breakdown" तपासा; चुकीचे वाटल्यास १५ दिवसांत आक्षेप घ्या.',
+            aEn: 'Common reasons: (1) annual rate revision, (2) reclassification (residential → commercial), (3) area change. Check "Breakdown"; if incorrect, file objection within 15 days.',
+          },
+          {
+            qMr: 'मी ज्येष्ठ नागरिक आहे — सूट मिळेल का?',
+            qEn: 'I am a senior citizen — do I get a discount?',
+            aMr: 'होय, स्व-कब्ज्यातील निवासी मालमत्तेसाठी ६०+ ज्येष्ठ नागरिकांना १०% सूट मिळते. वयाचा पुरावा एकदा प्रभाग कार्यालयात जमा करा — तो कायमस्वरूपी नोंदला जातो. (तुमच्या प्रभाग कार्यालयाकडून पुष्टी करा.)',
+            aEn: 'Yes, 10% rebate for senior citizens (60+) on self-occupied residential property. Submit age proof once at ward office — it\'s recorded permanently. (Confirm with your ward office.)',
+          },
+          {
+            qMr: 'हप्त्यांनी भरता येतो का?',
+            qEn: 'Can I pay in installments?',
+            aMr: 'होय, ४ त्रैमासिक हप्त्यांपर्यंत पर्याय आहे. ३० जूनपूर्वी संपूर्ण रक्कम एकरकमी भरल्यास सामान्यतः ~५% सूट मिळते.',
+            aEn: 'Yes, up to 4 quarterly installments. Full lump-sum payment before June 30 usually earns ~5% early-payer discount.',
+          },
+        ],
+      },
+      {
+        titleMr: 'ऑनलाइन भरा',
+        titleEn: 'Pay online',
+        helpMr: 'UPI, नेट बँकिंग, डेबिट/क्रेडिट कार्डसह पेमेंट करा.',
+        helpEn: 'Pay via UPI, net banking, debit or credit card.',
+        faqs: [
+          {
+            qMr: 'कोणत्या पद्धती स्वीकारल्या जातात?',
+            qEn: 'Which payment methods are accepted?',
+            aMr: 'UPI (सर्वात जलद), नेट बँकिंग, डेबिट कार्ड, क्रेडिट कार्ड. UPI साठी वेगळे शुल्क नाही.',
+            aEn: 'UPI (fastest), net banking, debit card, credit card. UPI has no extra fees.',
+          },
+          {
+            qMr: 'पेमेंट अयशस्वी झाले पण पैसे कापले — काय करू?',
+            qEn: 'Payment failed but money debited — what now?',
+            aMr: '२४ तास प्रतीक्षा करा — बहुतेक स्वयंचलितपणे परत केले जातात. न झाल्यास "पेमेंट समस्या" तक्रार आपल्या ट्रान्झॅक्शन आयडीसह नोंदवा.',
+            aEn: 'Wait 24 hours — most auto-refund. If not, file a "Payment issue" complaint with your transaction ID.',
+          },
+        ],
+      },
+      {
+        titleMr: 'पावती डाउनलोड करा',
+        titleEn: 'Download receipt',
+        helpMr: 'पावती PDF स्वरूपात मिळेल — भविष्यासाठी जतन करा.',
+        helpEn: 'Receipt comes as PDF — save for future reference.',
+        faqs: [
+          {
+            qMr: 'पावती हरवली — पुन्हा मिळेल का?',
+            qEn: 'I lost my receipt — can I get it back?',
+            aMr: 'होय. लॉगिन → पेमेंट व पावत्या → मालमत्ता क्रमांकाने शोधा. मागील ५ वर्षांच्या पावत्या उपलब्ध.',
+            aEn: 'Yes. Log in → Payments & Receipts → search by property number. Last 5 years available.',
+          },
+          {
+            qMr: 'पावतीत चुकीची रक्कम दिसते',
+            qEn: 'Receipt shows the wrong amount',
+            aMr: 'पेमेंट झाल्यापासून १५ दिवसांच्या आत आपल्या प्रभाग कार्यालयाशी ट्रान्झॅक्शन आयडी घेऊन संपर्क साधा.',
+            aEn: 'Contact your ward office within 15 days of payment with the transaction ID.',
+          },
+        ],
+      },
+    ],
   },
   {
     id: 'water-bills',

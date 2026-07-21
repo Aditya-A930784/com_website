@@ -5,10 +5,11 @@ import { usePathname } from 'next/navigation';
 import {
   CheckCircle2, Circle, ChevronDown, ChevronUp, X,
   ListChecks, PartyPopper, Volume2, VolumeX,
+  HelpCircle, Info, Lightbulb,
 } from 'lucide-react';
 import { cn } from '@/lib/utils/cn';
 import { useGuidanceStore } from '@/lib/smart-routing/guidance-store';
-import { trackStep } from '@/lib/smart-routing/telemetry';
+import { trackStep, trackFAQOpen } from '@/lib/smart-routing/telemetry';
 import { useTranslation } from '@/lib/i18n/LanguageContext';
 
 export default function GuidanceCompanion() {
@@ -19,7 +20,7 @@ export default function GuidanceCompanion() {
   const {
     activeServiceId,
     titleMr, titleEn,
-    stepsMr, stepsEn,
+    stepsMr, stepsEn, stepDetails,
     currentStep,
     isMinimized,
     completeStep,
@@ -29,6 +30,8 @@ export default function GuidanceCompanion() {
   const [mounted, setMounted] = useState(false);
   const [ttsEnabled, setTtsEnabled] = useState(true);
   const [ttsSupported, setTtsSupported] = useState(false);
+  const [helpOpen, setHelpOpen] = useState(false);
+  const [openFAQ, setOpenFAQ] = useState<number | null>(null);
   const prevStepRef = useRef<number>(-99);
   const prevPathRef = useRef<string>('');
 
@@ -38,8 +41,6 @@ export default function GuidanceCompanion() {
   }, []);
 
   // E2 · Route-aware auto-advance
-  // When the citizen navigates to a new page while guidance is active, assume
-  // they completed the current step (they clicked through to the right place).
   useEffect(() => {
     if (!activeServiceId || currentStep < 0) return;
     if (prevPathRef.current && prevPathRef.current !== pathname) {
@@ -49,7 +50,13 @@ export default function GuidanceCompanion() {
     prevPathRef.current = pathname;
   }, [pathname, activeServiceId, currentStep, completeStep]);
 
-  // E1 · TTS — speak the active step when it changes
+  // Reset help panel and FAQ selection when step changes
+  useEffect(() => {
+    setHelpOpen(false);
+    setOpenFAQ(null);
+  }, [currentStep]);
+
+  // E1 · TTS
   useEffect(() => {
     if (!mounted || !ttsEnabled || !ttsSupported) return;
     if (!activeServiceId || currentStep < 0) return;
@@ -61,13 +68,13 @@ export default function GuidanceCompanion() {
     if (!text) return;
 
     window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = isMr ? 'mr-IN' : 'en-IN';
-    utterance.rate = 0.9;
-    window.speechSynthesis.speak(utterance);
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = isMr ? 'mr-IN' : 'en-IN';
+    u.rate = 0.9;
+    window.speechSynthesis.speak(u);
   }, [currentStep, isMr, stepsMr, stepsEn, activeServiceId, ttsEnabled, ttsSupported, mounted]);
 
-  // Auto-dismiss 3s after completion
+  // Auto-dismiss after complete
   useEffect(() => {
     if (currentStep === -1) {
       const t = setTimeout(() => dismiss(), 3000);
@@ -75,12 +82,19 @@ export default function GuidanceCompanion() {
     }
   }, [currentStep, dismiss]);
 
-  // Track manual done-button presses
   function handleCompleteStep() {
-    if (activeServiceId && currentStep >= 0) {
-      trackStep(activeServiceId, currentStep, true);
-    }
+    if (activeServiceId && currentStep >= 0) trackStep(activeServiceId, currentStep, true);
     completeStep();
+  }
+
+  function handleFAQClick(idx: number) {
+    if (!activeServiceId) return;
+    if (openFAQ === idx) {
+      setOpenFAQ(null);
+      return;
+    }
+    setOpenFAQ(idx);
+    trackFAQOpen(activeServiceId, currentStep, idx);
   }
 
   if (!mounted || !activeServiceId) return null;
@@ -88,6 +102,8 @@ export default function GuidanceCompanion() {
   const steps = isMr ? stepsMr : stepsEn;
   const title = isMr ? titleMr : titleEn;
   const isCompleted = currentStep === -1;
+  const activeStepDetail = stepDetails && currentStep >= 0 ? stepDetails[currentStep] : null;
+  const hasHelp = !!activeStepDetail;
 
   // ── Minimized ──────────────────────────────────────────────────────────────
   if (isMinimized) {
@@ -110,7 +126,7 @@ export default function GuidanceCompanion() {
   // ── Completed ──────────────────────────────────────────────────────────────
   if (isCompleted) {
     return (
-      <div className="fixed bottom-6 right-6 z-50 w-72 rounded-2xl bg-green-600 p-5 text-white shadow-2xl animate-in slide-in-from-bottom-4">
+      <div className="fixed bottom-6 right-6 z-50 w-72 rounded-2xl bg-green-600 p-5 text-white shadow-2xl">
         <div className="flex items-center gap-3">
           <PartyPopper size={28} />
           <div>
@@ -125,7 +141,7 @@ export default function GuidanceCompanion() {
   // ── Active panel ───────────────────────────────────────────────────────────
   return (
     <div
-      className="fixed bottom-6 right-6 z-50 w-80 rounded-2xl bg-white shadow-2xl ring-1 ring-gray-200"
+      className="fixed bottom-6 right-6 z-50 w-96 max-w-[calc(100vw-32px)] rounded-2xl bg-white shadow-2xl ring-1 ring-gray-200 max-h-[85vh] flex flex-col"
       role="complementary"
       aria-label={isMr ? 'मार्गदर्शन सहाय्यक' : 'Guidance companion'}
     >
@@ -137,11 +153,10 @@ export default function GuidanceCompanion() {
           {currentStep + 1}/{steps.length}
         </span>
 
-        {/* E1 · TTS toggle */}
         {ttsSupported && (
           <button
             onClick={() => setTtsEnabled((v) => !v)}
-            aria-label={ttsEnabled ? (isMr ? 'आवाज बंद करा' : 'Mute') : (isMr ? 'आवाज चालू करा' : 'Unmute')}
+            aria-label={ttsEnabled ? (isMr ? 'आवाज बंद' : 'Mute') : (isMr ? 'आवाज चालू' : 'Unmute')}
             className="flex h-7 w-7 items-center justify-center rounded-lg text-white/70 hover:bg-white/15 hover:text-white transition"
           >
             {ttsEnabled ? <Volume2 size={15} /> : <VolumeX size={15} />}
@@ -156,34 +171,101 @@ export default function GuidanceCompanion() {
         </button>
       </div>
 
-      {/* Step list */}
-      <ol className="px-4 py-3 space-y-2">
-        {steps.map((step, i) => {
-          const done = i < currentStep;
-          const active = i === currentStep;
-          return (
-            <li
-              key={i}
-              className={cn(
-                'flex items-start gap-3 rounded-xl px-3 py-2.5 text-sm transition',
-                active && 'bg-primary-50 ring-1 ring-primary-200',
-                done && 'opacity-60'
-              )}
-            >
-              {done ? (
-                <CheckCircle2 size={18} className="mt-0.5 shrink-0 text-green-500" />
-              ) : active ? (
-                <div className="mt-0.5 h-[18px] w-[18px] shrink-0 rounded-full border-2 border-primary-500 bg-primary-500" />
-              ) : (
-                <Circle size={18} className="mt-0.5 shrink-0 text-gray-300" />
-              )}
-              <span className={cn('leading-snug', active ? 'font-semibold text-gray-900' : 'text-gray-500')}>
-                {step}
-              </span>
-            </li>
-          );
-        })}
-      </ol>
+      {/* Scroll body */}
+      <div className="overflow-y-auto flex-1">
+        {/* Step list */}
+        <ol className="px-4 py-3 space-y-2">
+          {steps.map((step, i) => {
+            const done = i < currentStep;
+            const active = i === currentStep;
+            return (
+              <li
+                key={i}
+                className={cn(
+                  'flex items-start gap-3 rounded-xl px-3 py-2.5 text-sm transition',
+                  active && 'bg-primary-50 ring-1 ring-primary-200',
+                  done && 'opacity-60'
+                )}
+              >
+                {done ? (
+                  <CheckCircle2 size={18} className="mt-0.5 shrink-0 text-green-500" />
+                ) : active ? (
+                  <div className="mt-0.5 h-[18px] w-[18px] shrink-0 rounded-full border-2 border-primary-500 bg-primary-500" />
+                ) : (
+                  <Circle size={18} className="mt-0.5 shrink-0 text-gray-300" />
+                )}
+                <span className={cn('leading-snug', active ? 'font-semibold text-gray-900' : 'text-gray-500')}>
+                  {step}
+                </span>
+              </li>
+            );
+          })}
+        </ol>
+
+        {/* Active step: help snippet + hint + Ask/FAQ toggle */}
+        {activeStepDetail && (
+          <div className="mx-4 mb-3 rounded-xl border border-primary-100 bg-primary-50/40 p-3 space-y-2">
+            {(activeStepDetail.helpMr || activeStepDetail.helpEn) && (
+              <p className="flex items-start gap-2 text-xs text-gray-700 leading-relaxed">
+                <Info size={14} className="mt-0.5 shrink-0 text-primary-600" />
+                <span>{isMr ? activeStepDetail.helpMr : activeStepDetail.helpEn}</span>
+              </p>
+            )}
+            {(activeStepDetail.hintMr || activeStepDetail.hintEn) && (
+              <p className="flex items-start gap-2 text-xs text-amber-700 leading-relaxed">
+                <Lightbulb size={14} className="mt-0.5 shrink-0" />
+                <span>{isMr ? activeStepDetail.hintMr : activeStepDetail.hintEn}</span>
+              </p>
+            )}
+            {activeStepDetail.faqs && activeStepDetail.faqs.length > 0 && (
+              <button
+                onClick={() => setHelpOpen((v) => !v)}
+                className="flex w-full items-center justify-between rounded-lg bg-white px-3 py-2 text-xs font-semibold text-primary-700 shadow-sm hover:bg-primary-50 transition"
+                aria-expanded={helpOpen}
+              >
+                <span className="flex items-center gap-1.5">
+                  <HelpCircle size={14} />
+                  {isMr
+                    ? `${activeStepDetail.faqs.length} सामान्य प्रश्न`
+                    : `${activeStepDetail.faqs.length} common questions`}
+                </span>
+                <ChevronDown size={14} className={cn('transition-transform', helpOpen && 'rotate-180')} />
+              </button>
+            )}
+          </div>
+        )}
+
+        {/* FAQ accordion (only when open + faqs exist) */}
+        {helpOpen && activeStepDetail?.faqs && (
+          <div className="mx-4 mb-3 space-y-2">
+            {activeStepDetail.faqs.map((faq, i) => {
+              const isOpen = openFAQ === i;
+              return (
+                <div key={i} className="rounded-xl border border-gray-200 bg-white overflow-hidden">
+                  <button
+                    onClick={() => handleFAQClick(i)}
+                    className="flex w-full items-center justify-between gap-2 px-3 py-2.5 text-left text-sm font-medium text-gray-800 hover:bg-gray-50 transition"
+                    aria-expanded={isOpen}
+                  >
+                    <span className="flex-1 leading-snug">{isMr ? faq.qMr : faq.qEn}</span>
+                    <ChevronDown size={14} className={cn('shrink-0 text-gray-400 transition-transform', isOpen && 'rotate-180')} />
+                  </button>
+                  {isOpen && (
+                    <div className="border-t border-gray-100 bg-gray-50 px-3 py-2.5 text-xs text-gray-700 leading-relaxed">
+                      {isMr ? faq.aMr : faq.aEn}
+                      {faq.sourceRef && (
+                        <div className="mt-2 text-[10px] text-gray-400">
+                          {isMr ? 'स्रोत: ' : 'Source: '}{faq.sourceRef}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
 
       {/* Progress bar */}
       <div className="mx-4 h-1.5 rounded-full bg-gray-100 overflow-hidden">
