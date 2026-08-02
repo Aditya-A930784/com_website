@@ -4,9 +4,9 @@ A next-generation, mobile-first, and accessible e-governance platform for Chhatr
 
 ---
 
-## 🚀 Key Features
+##  Key Features
 
-### 🔓 Guest & Public Portal (Unauthenticated)
+###  Guest & Public Portal (Unauthenticated)
 To improve usability and eliminate friction, the portal features a dedicated unauthenticated route group `(public)` supporting:
 - **Hero & Landing Section** - Important municipal announcements, official contacts, and quick links.
 - **Services Hub** - A comprehensive dashboard of all available services categorized by department.
