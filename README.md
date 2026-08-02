@@ -27,7 +27,7 @@ For personalized and secure municipal tasks:
 
 ---
 
-## 🏗️ Technical Stack
+##  Technical Stack
 
 - **Frontend**: Next.js 14 (App Router), React 18, TypeScript, Tailwind CSS, Framer Motion (micro-interactions)
 - **State Management**: Zustand & React Query (TanStack Query)
