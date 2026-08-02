@@ -14,7 +14,7 @@ To improve usability and eliminate friction, the portal features a dedicated una
 - **Tenders Portal** - View and filter active municipal tenders with date-sorting.
 - **Document & RTS Directory** - Download key forms, Right to Services (RTS) documents, and Right to Information (RTI) sheets.
 
-### 🔐 Authenticated Dashboards (Citizen, Officer & Admin)
+### Authenticated Dashboards (Citizen, Officer & Admin)
 For personalized and secure municipal tasks:
 - **Citizen Account** - Manage properties, view and pay property tax receipts, track historical water bills, and request digital certificates.
 - **Officer Console** - Review applications, update complaint statuses, and assign tasks.
