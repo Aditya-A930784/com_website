@@ -40,7 +40,7 @@ For personalized and secure municipal tasks:
 
 ---
 
-## 📁 Project Structure
+##  Project Structure
 
 ```
 csnmahanagarpalika/
