@@ -20,7 +20,7 @@ For personalized and secure municipal tasks:
 - **Officer Console** - Review applications, update complaint statuses, and assign tasks.
 - **Admin Dashboard** - Role-based access control (RBAC), audit logging, and service configurations.
 
-### 🌐 Custom i18n & Accessibility
+###  Custom i18n & Accessibility
 - **Marathi-First Design** - Marathi is initialized as the primary default language, with a persistent client-side locale switcher to English.
 - **AAA Typography Controls** - Native font-size adjustments (A- / A / A+) on all headers and pages to improve legibility.
 - **High Contrast & Accessible Layout** - Full WCAG 2.2 AA compliance, large touch targets (min 44x44px), and keyboard-navigable components.
