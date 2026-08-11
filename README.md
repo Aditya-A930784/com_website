@@ -2,7 +2,7 @@
 
 A next-generation, mobile-first, and accessible e-governance platform for Chhatrapati Sambhajinagar Municipal Corporation (formerly Aurangabad Municipal Corporation). This portal is optimized for Marathi-speaking,  low-to-semi-technical, and low-bandwidth citizens, removing login barriers for public information and essential interactions.
 
----
+--- 
   
 ##  Key Features
 
